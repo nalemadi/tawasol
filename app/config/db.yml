@@ -1,0 +1,5 @@
+host: '10.2.0.139'
+port: [REDACTED_PORT]
+db_name: 'tawasol'
+collections:
+	users: 'users'

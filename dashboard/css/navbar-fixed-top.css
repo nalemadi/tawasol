@@ -1,0 +1,10 @@
+.top-buffer { margin-top:20px; }
+.input-group-addon-1 {
+    min-width:70px;// if you want width please write here //
+    text-align:left;
+}
+
+.input-group-addon-2 {
+    min-width:110px;// if you want width please write here //
+    text-align:left;
+}
