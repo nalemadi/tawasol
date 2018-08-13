@@ -33,7 +33,7 @@ def login():
 	if request.method == 'POST':
 		username = request.form['username']
 		password = request.form['password']
-		if password == "tawasol" and username == "tawasol_admin":
+		if password == "tawasol_admin_secret" and username == "tawasol_admin":
 			user = User(username)
 			print user
 			login_user(user)
@@ -61,6 +61,7 @@ def page_not_found(e):
 def index():
 	return render_template('index.html')
 
-
+"""
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0', port=5009)
+"""
