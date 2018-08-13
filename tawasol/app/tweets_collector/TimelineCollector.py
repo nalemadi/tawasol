@@ -1,6 +1,5 @@
 from tweepy.streaming import StreamListener
-from tweepy import OAuthHandler, Stream
-from app import twitter_keys
+from tawasol.app import twitter_keys
 import json
 import logging
 

@@ -9,5 +9,6 @@ api = Api(app)
 #api.add_resource(, '/api/v1/tawasol', endpoint="")
 
 if __name__ == '__main__':
+	# TODO: sqlite for login info, check best practices
 
 	app.run(debug=True, host='0.0.0.0', port=5009)
