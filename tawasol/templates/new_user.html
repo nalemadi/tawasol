@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+{% block body %}
+    <div class="row" style="margin-top:5%;">
+        <div class="col-lg-4 col-lg-offset-4">
+            <h1>Create new user</h1>
+            <form action="" method="POST" role="form">
+                <div class="form-group">
+                    <label for="newEmail">Email</label>
+                    <input type="email" class="form-control" name="email" id="newEmail" aria-describedby="emailHelp" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="inputName">Username</label>
+                    <input type="username" class="form-control" name="username" id="inputName" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" name="password" id="inputPassword" placeholder="Enter Password">
+                </div>
+                <div class="form-group">
+                    <label for="inputReenterPassword">Re-enter Password</label>
+                    <input type="password" class="form-control" name="repassword" id="inputReenterPassword" placeholder="Re-enter Password">
+                </div>
+                <button type="submit" class="btn btn-success">Create New Users</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

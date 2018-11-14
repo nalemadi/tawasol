@@ -4,6 +4,6 @@
 # www.robotstxt.org/
 
 # Allow crawling of all content
-User-agent: *
+Users-agent: *
 Disallow:
 Sitemap: {{ site.url }}/sitemap.xml
