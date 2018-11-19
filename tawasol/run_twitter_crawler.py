@@ -18,7 +18,6 @@ print users_dict
 print tweets_channel
 print REDIS_DB
 
-"""
 proxy_index = 0
 proxies_list = qcri_proxies
 os.environ['http_proxy']="[REDACTED_PROXYADD]"+proxies_list[proxy_index]+":[REDACTED_VALUE]"
@@ -28,4 +27,3 @@ tweet_processor.start()
 
 twitter_collector_thr = Process(target=TweetsCollector, args=[twitter_keys, hashtags, accounts, REDIS_DB, tweets_channel])
 twitter_collector_thr.start()
-"""

@@ -36,6 +36,7 @@ class TweetProcessor(Process):
 						for tweet_collection in self.tweets_collection_list:
 							if collection == tweet_collection.name:
 								tweet_collection.insert_one(processed_tweet)
+								print 'tweet:', processed_tweet, 'inserted into:', collection
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass
