@@ -40,12 +40,12 @@ class Users(UserMixin, db.Model):
 		return False
 
 
-class Hashtags(db.Model):
+class Keywords(db.Model):
 
-	__tablename__ = 'hashtags'
+	__tablename__ = 'keywords'
 
-	hashtagID = db.Column(db.INTEGER, primary_key=True)
-	hashtagName = db.Column(db.String)
+	keywordID = db.Column(db.INTEGER, primary_key=True)
+	keywordName = db.Column(db.String)
 	email = db.Column(db.String, db.ForeignKey(Users.email), nullable=False)
 
 	#user = db.relationship('Users', lazy='joined') #foreign_keys='Users.email'
@@ -56,7 +56,7 @@ class Hashtags(db.Model):
 
 	def get_id(self):
 		#print 'database, userid', self.username
-		return self.hashtagID
+		return self.keywordsID
 
 
 	def is_anonymous(self):
@@ -70,7 +70,8 @@ class Accounts(db.Model):
 
 	accountID = db.Column(db.INTEGER, primary_key=True)
 	accountName = db.Column(db.String)
-	email= db.Column(db.String, db.ForeignKey(Users.email), nullable=False)
+	email = db.Column(db.String, db.ForeignKey(Users.email), nullable=False)
+	userID = db.Column(db.INTEGER)
 
 	#user = db.relationship('Users', foreign_keys='Users.username')
 	#user = db.relationship('Users', lazy='joined')

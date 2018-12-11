@@ -1,8 +1,4 @@
-from ..utils.text_operations import clean_text
-from tweet import Tweet
-from pytz import timezone
-from collections import defaultdict
-from datetime import datetime
+from ..utils.text_operations import simple_clean_text
 
 
 class TweetsAnalyzer():
@@ -11,37 +7,43 @@ class TweetsAnalyzer():
 
 	def process_tweet(self, tweet, users_dict):
 		"""
-		add extra information to tweet object
+		assign tweet to tawasol_user
 		:param tweet:
 		:return: tweet object with extra info
 		"""
-		print tweet
+		tweet_text_arr = simple_clean_text(tweet['text'])
+		tweet_user = tweet['user']['screen_name']
 		collections = []
 		for key, value in users_dict.iteritems():
-			#check hashtags
-			hashtags = value['hashtags']
-			for hashtag in hashtags:
-				if hashtag in tweet['text']:
+			#check keywords
+			keywords = value['keywords']
+			for keyword in keywords:
+				if keyword.lower() in tweet_text_arr:
+					print 'keyword found'
 					collections.append(key+'_tweets')
+
 			#check accounts
 			accounts = value['accounts']
 			for account in accounts:
-				if account == tweet['user']['screen_name']:
+				if account.lower() == tweet_user.lower():
+					print 'account found'
 					collections.append(key + '_tweets')
 
-		tweet['created_at'] = self.to_datetime(tweet['created_at']).replace(tzinfo=timezone('GMT'))
 		return tweet, collections
 
+"""
 	def get_qatar_locations(self):
 		return ['qatar','doha']
 
 	def is_tweet_from_qatar(self, tweet):
 		"""
+"""
 		not used
 		Check whether tweet is from Qatar or not
 		:param tweet: tweet object
 		:return: boolean
-		"""
+"""
+"""
 		if 'coordinates' not in tweet.keys() and 'user' not in tweet.keys():
 			return False
 
@@ -66,3 +68,4 @@ class TweetsAnalyzer():
 				if usr_location in qatar_locations:
 					return True
 			return False
+"""

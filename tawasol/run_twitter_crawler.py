@@ -1,8 +1,8 @@
 import os
 from app.utils.consts import qcri_proxies
 from app import MONGO_DB_CONFIG, REDIS_CONFIG, twitter_keys, tweets_collections_list, \
-	hashtags, accounts, REDIS_DB, tweets_channel, users_dict
-from app.tweets_collector import TweetsCollector
+	keywords, accounts, REDIS_DB, tweets_channel, users_dict
+from app.tweets_collector.tweets_collector import tweets_collector
 from app.data_analyzer.tweets_processor import TweetProcessor
 from multiprocessing import Process
 
@@ -10,8 +10,13 @@ from multiprocessing import Process
 print MONGO_DB_CONFIG
 print REDIS_CONFIG
 print twitter_keys
-print 'total hashtags', hashtags
+###############
+print 'total hashtags', keywords
+twitter_keywords = ','.join(keywords)
+print twitter_keywords
+
 print 'total accounts', accounts
+###############
 print tweets_collections_list
 
 print users_dict
@@ -25,5 +30,5 @@ os.environ['http_proxy']="[REDACTED_PROXYADD]"+proxies_list[proxy_index]+":[REDA
 tweet_processor = TweetProcessor(REDIS_DB, tweets_channel, tweets_collections_list, users_dict)
 tweet_processor.start()
 
-twitter_collector_thr = Process(target=TweetsCollector, args=[twitter_keys, hashtags, accounts, REDIS_DB, tweets_channel])
+twitter_collector_thr = Process(target=tweets_collector, args=(twitter_keys, twitter_keywords, accounts, REDIS_DB, tweets_channel,))
 twitter_collector_thr.start()

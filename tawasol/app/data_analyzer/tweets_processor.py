@@ -27,16 +27,18 @@ class TweetProcessor(Process):
 				# if there is something in the queue, process it.
 				if self.redis_db.llen(self.tweets_channel) > 0:
 					tweet = self.redis_db.lpop(self.tweets_channel)
+					#logging.info(json.dumps(tweet, ensure_ascii=False).encode('utf8'))
+
 					_tweet = json.loads(tweet)
-					#TODO check process tweets to add tweet to one or more users
 					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
 					processed_tweet = processed_info[0]
 					collections = processed_info[1]
+					#print collections, processed_tweet
 					for collection in collections:
 						for tweet_collection in self.tweets_collection_list:
 							if collection == tweet_collection.name:
 								tweet_collection.insert_one(processed_tweet)
-								print 'tweet:', processed_tweet, 'inserted into:', collection
+								logging.info('tweet: %s, inserted into: %s' % processed_tweet, collection)
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass

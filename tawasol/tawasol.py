@@ -1,6 +1,6 @@
 from flask import Flask, render_template, Response, redirect, url_for, request, session, abort
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
-from database import Users, Hashtags, Accounts, db
+from database import Users, Keywords, Accounts, db
 import pcrypt
 
 app = Flask(__name__)
@@ -93,6 +93,7 @@ def login():
 			else:
 				return Response('<p>Password Wrong</p>')
 		else:
+			return Response('<p>user not found</p>')
 			print 'user not found'
 	else:
 		print "login, GET"
@@ -106,14 +107,14 @@ def profile():
 	user = Users.query.get(user_email)
 	print 'current user:', user, user_email
 
-	# get hashtags from Database for current user
-	hashtags = get_all_hashtags(user_email)
+	# get keywords from Database for current user
+	keywords = get_all_keywords(user_email)
 	# get accounts from Database for current user
 	accounts = get_all_accounts(user_email)
 
-	#data = session.query(Hashtags).options(db.joinedload(Hashtags.user, innerjoin=True))
-	#hashtags = session.query(Hashtags).filter(Users.username == username).all()
-	#data = db.session.query(Users, Hashtags).join(Users).all()
+	#data = session.query(Keywords).options(db.joinedload(Keywords.user, innerjoin=True))
+	#keywords = session.query(Keywords).filter(Users.username == username).all()
+	#data = db.session.query(Users, Keywords).join(Users).all()
 
 	if request.method == 'POST':
 		if user:
@@ -136,9 +137,9 @@ def profile():
 				accounts_broken = None
 
 			if keywords_broken:
-				if hashtags:
+				if keywords:
 					print 'previous keywords is not None'
-					keywords_from_DB = hashtags.strip().split(',')
+					keywords_from_DB = keywords.strip().split(',')
 					print 'keywords_from_DB:', keywords_from_DB, 'keywords_broken', keywords_broken
 
 					new_keywords = list(set(keywords_broken) - set(keywords_from_DB))
@@ -146,36 +147,37 @@ def profile():
 
 					# add new keywords
 					for new_keyword in new_keywords:
-						n_hashtag = Hashtags(
-							hashtagName=new_keyword,
+						n_keyword = Keywords(
+							keywordName=new_keyword,
 							email=user.email)
-						db.session.add(n_hashtag)
+						db.session.add(n_keyword)
 						db.session.commit()
-						print 'hashtag:', new_keyword, 'is added!'
+						print 'keyword:', new_keyword, 'is added!'
 
 					# remove deleted keywords
 					for removed_keyword in removed_keywords:
 						db.session.query(Accounts.accountID).filter_by(accountName=removed_keyword).delete()
 						db.session.commit()
-						print 'hashtag:', removed_keyword, 'is removed!'
+						print 'keyword:', removed_keyword, 'is removed!'
 				else:
 					# first time to add keywords
 					print 'keywords is None'
-					for keyword in keywords_broken:
-						if keyword:
-							exists = db.session.query(Hashtags.hashtagID).filter_by(hashtagName=keyword).scalar()
-							print 'keyword', keyword, 'exists:', exists
+					for n_keyword in keywords_broken:
+						print ' ==== first time======', n_keyword
+						if n_keyword:
+							exists = db.session.query(Keywords.keywordID).filter_by(keywordName=n_keyword).scalar()
+							print 'keyword', n_keyword, 'exists:', exists
 							if not exists:
-								hashtag = Hashtags(
-									hashtagName=keyword,
+								keyword_insert = Keywords(
+									keywordName=n_keyword,
 									email=user.email)
-								db.session.add(hashtag)
+								db.session.add(keyword_insert)
 								db.session.commit()
-								print 'hashtag:', keyword, 'is added!'
+								print 'keyword:', n_keyword, 'is added!'
 			else:
 				# delete all keywords
 				print 'delete all keywords'
-				db.session.query(Hashtags).delete()
+				db.session.query(Keywords).delete()
 				db.session.commit()
 
 			if accounts_broken:
@@ -221,34 +223,34 @@ def profile():
 				db.session.query(Accounts).delete()
 				db.session.commit()
 
-			#get updated hashtags and accounts from DB
-			hashtags = get_all_hashtags(user_email)
+			#get updated keywords and accounts from DB
+			keywords = get_all_keywords(user_email)
 			accounts = get_all_accounts(user_email)
-			return render_template('profile.html', username=user.username, user_keywords=hashtags, user_accounts=accounts)
+			return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
 		else:
 			print 'user not found'
 	else:
 		#Accounts.query.delete() #debuging
-		#Hashtags.query.delete() #debuging
+		#Keywords.query.delete() #debuging
 		#db.session.commit() #debuging
 		print 'Profile GET'
 		print 'current user', user_email
 
-		return render_template('profile.html', username=user.username, user_keywords=hashtags, user_accounts=accounts)
+		return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
 
 
-def get_all_hashtags(user_email):
-	existing_hashtags = db.session.query(Hashtags).filter(Hashtags.email == user_email)
-	# for hash in existing_hashtags:
-	#	print hash.hashtagName, ',', hash.email
-	all_hashtags = [hash.hashtagName for hash in existing_hashtags]
-	if len(all_hashtags) > 1:
-		hashtags = ','.join(all_hashtags)
-	elif len(all_hashtags) == 1:
-		hashtags = all_hashtags[0]
+def get_all_keywords(user_email):
+	existing_keywords = db.session.query(Keywords).filter(Keywords.email == user_email)
+	# for hash in existing_keywords:
+	#	print hash.keywordName, ',', hash.email
+	all_keywords = [keyword_.keywordName for keyword_ in existing_keywords]
+	if len(all_keywords) > 1:
+		keywords = ','.join(all_keywords)
+	elif len(all_keywords) == 1:
+		keywords = all_keywords[0]
 	else:
-		hashtags = None
-	return hashtags
+		keywords = None
+	return keywords
 
 
 def get_all_accounts(user_email):
