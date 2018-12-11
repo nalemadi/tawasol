@@ -7,7 +7,7 @@ from sqlite3 import Error
 class SqliteManager:
 
 	def __init__(self):
-		self.database_file = '/Users/noora/PyCharm-Projects/tawasol/tawasol/tawasol.sqlite'
+		self.database_file = 'tawasol.sqlite'
 		self.connection = self.create_connection()
 		self.users = self.select_all_users()
 
