@@ -15,19 +15,21 @@ class TweetsAnalyzer():
 		tweet_user = tweet['user']['screen_name']
 		collections = []
 		for key, value in users_dict.iteritems():
+			key_broken = key.split('@')
+			user_name = key_broken[0]
 			#check keywords
 			keywords = value['keywords']
 			for keyword in keywords:
 				if keyword.lower() in tweet_text_arr:
 					print 'keyword found'
-					collections.append(key+'_tweets')
+					collections.append(user_name+'_tweets')
 
 			#check accounts
 			accounts = value['accounts']
 			for account in accounts:
 				if account.lower() == tweet_user.lower():
 					print 'account found'
-					collections.append(key + '_tweets')
+					collections.append(user_name + '_tweets')
 
 		return tweet, collections
 
