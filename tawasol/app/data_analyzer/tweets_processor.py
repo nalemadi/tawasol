@@ -33,7 +33,7 @@ class TweetProcessor(Process):
 					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
 					processed_tweet = processed_info[0]
 					collections = processed_info[1]
-					#print collections, processed_tweet
+					logging.info('collection: %s, process tweet: %s' % collections, processed_tweet)
 					for collection in collections:
 						for tweet_collection in self.tweets_collection_list:
 							if collection == tweet_collection.name:
