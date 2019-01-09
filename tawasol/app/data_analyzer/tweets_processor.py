@@ -33,12 +33,12 @@ class TweetProcessor(Process):
 					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
 					processed_tweet = processed_info[0]
 					collections = processed_info[1]
-					print 'INFO: collection: ', collections, 'process tweet:' , processed_tweet
+					print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text']
 					for collection in collections:
 						for tweet_collection in self.tweets_collection_list:
 							if collection == tweet_collection.name:
 								tweet_collection.insert_one(processed_tweet)
-								print 'INFO: tweet: ',processed_tweet, 'inserted into:', collection
+								print 'INFO: tweet: ',processed_tweet['text'], 'inserted into:', collection
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass
