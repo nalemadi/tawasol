@@ -249,6 +249,7 @@ def profile():
 
 
 def get_all_keywords(user_email):
+	print 'get_all_keywords'
 	existing_keywords = db.session.query(Keywords).filter(Keywords.email == user_email)
 	# for hash in existing_keywords:
 	#	print hash.keywordName, ',', hash.email
@@ -263,6 +264,7 @@ def get_all_keywords(user_email):
 
 
 def get_all_accounts(user_email):
+	print 'get_all_accounts'
 	existing_accounts = db.session.query(Accounts).filter(Accounts.email == user_email)
 	all_accounts = [account_.accountName for account_ in existing_accounts]
 	if len(all_accounts) > 1:
