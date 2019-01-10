@@ -82,6 +82,7 @@ def login():
 			print 'user email found:', userEmail
 			if pcrypt.check_password_hash(password):
 				user.authenticated = True
+				#session['curr_user'] = user
 				#db.session.add(user)
 				db.session.commit()
 				print 'update user'
@@ -89,7 +90,8 @@ def login():
 				next = request.args.get('next')
 				print 'next:', next
 				print user.username, user.authenticated, user.email
-				return redirect(url_for('profile', username=user.username))#redirect(next or url_for("index"))
+				print 'current_user: ', user
+				return redirect(url_for('profile', current_user=user))#redirect(next or url_for("index"))
 			else:
 				return Response('<p>Password Wrong</p>')
 		else:
@@ -103,6 +105,11 @@ def login():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+	#
+	print '=== profile ==='
+	#user_test = session['curr_user']
+	#print user_test
+	#
 	user_email = session['user_id']
 	user = Users.query.get(user_email)
 	print 'current user:', user, user_email
@@ -226,7 +233,8 @@ def profile():
 			#get updated keywords and accounts from DB
 			keywords = get_all_keywords(user_email)
 			accounts = get_all_accounts(user_email)
-			return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
+			#return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
+			return render_template('profile.html', current_user=user, user_keywords=keywords, user_accounts=accounts)
 		else:
 			print 'user not found'
 	else:
@@ -236,7 +244,8 @@ def profile():
 		print 'Profile GET'
 		print 'current user', user_email
 
-		return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
+		#return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
+		return render_template('profile.html', current_user=user, user_keywords=keywords, user_accounts=accounts)
 
 
 def get_all_keywords(user_email):
@@ -268,6 +277,11 @@ def get_all_accounts(user_email):
 @app.route("/logout")
 @login_required
 def logout():
+	print '=== logout ==='
+	#
+	#user_test = session['curr_user']
+	#print user_test
+	#
 	username = session['user_id']
 	user = Users.query.get(username)
 	if user:
@@ -290,6 +304,7 @@ def page_not_found(e):
 
 @app.route('/')
 def index():
+	print '== index =='
 	return render_template('index.html')
 
 """
