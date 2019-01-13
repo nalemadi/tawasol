@@ -132,7 +132,7 @@ def profile():
 
 			if submitted_keywords:
 				print 'submitted_keywords is not None', submitted_keywords
-				keywords_broken = submitted_keywords.split(',')
+				keywords_broken = [k.strip().lower() for k in submitted_keywords.split(',') if len(k.strip()) > 1]
 			else:
 				print 'empty submitted keywords'
 				keywords_broken = None
@@ -153,6 +153,7 @@ def profile():
 					removed_keywords = list(set(keywords_from_DB) - set(keywords_broken))
 
 					# add new keywords
+					# TODO: Noora: Check that you are not adding the same keyword twice.
 					for new_keyword in new_keywords:
 						n_keyword = Keywords(
 							keywordName=new_keyword,
