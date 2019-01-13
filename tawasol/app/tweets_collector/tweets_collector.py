@@ -8,6 +8,7 @@ from .. import sqlite_manager
 logger = logging.getLogger(__name__)
 __author__ = 'noora'
 
+
 def get_accounts(api, accounts):
 	users_ids = []
 	for account in accounts:
@@ -16,11 +17,15 @@ def get_accounts(api, accounts):
 		if db_user_id:
 			users_ids.append(str(db_user_id))
 		else:
-			user = api.get_user(screen_name=account)
-			if user:
-				# insert to sqlite
-				sqlite_manager.insert_userID_into_accounts(user.id, account)
-				users_ids.append(str(user.id))
+			try:
+				user = api.get_user(screen_name=account)
+				if user:
+					# insert to sqlite
+					sqlite_manager.insert_userID_into_accounts(user.id, account)
+					users_ids.append(str(user.id))
+			except tweepy.TweepError as e:
+				print 'tweets_collector:', e, 'account: ', account
+				pass
 	###
 	users_accounts = ','.join(users_ids)
 	return users_accounts
