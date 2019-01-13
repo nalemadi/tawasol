@@ -49,7 +49,9 @@ def tweets_collector(twitter_key, hashtags, accounts, redis_db, tweets_channel):
 			stream_listener = TweetsListener(redis_db, tweets_channel)
 			stream = Stream(auth, stream_listener)
 			#hashtags='qatar'
-			stream.filter(track=hashtags,follow=users_accounts)#, follow=accounts)#,track=self.users_name)
+			# stream.filter(track=hashtags, follow=users_accounts)#, follow=accounts)#,track=self.users_name)
+			print 'users_hashtags:', hashtags
+			stream.filter(track=hashtags)#, follow=accounts)#,track=self.users_name)
 
 		except Exception as e:
 			print 'Something went wrong with the listener, the exception is:', e

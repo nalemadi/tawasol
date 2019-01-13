@@ -11,9 +11,9 @@ print MONGO_DB_CONFIG
 print REDIS_CONFIG
 print twitter_keys
 ###############
-print 'total hashtags', keywords
+print 'total hashtags: ', len(keywords)
 twitter_keywords = ','.join(keywords)
-print twitter_keywords
+# print twitter_keywords
 
 print 'total accounts', accounts
 ###############

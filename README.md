@@ -4,3 +4,9 @@ TAWASOL is a dashboard that continuously tracks different social media channels 
 # Deployment
 1. run `sh start_tawasol_website_gunicorn.sh`
 2. run `python run_twitter_crawler.py`
+
+### Observation:
+We need to install nltk: `pip install nltk`
+then, start python and type:
+`import nltk
+nltk.download('stopwords')`

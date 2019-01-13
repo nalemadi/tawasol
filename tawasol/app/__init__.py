@@ -33,6 +33,9 @@ for key, value in users_dict.iteritems():
 	if user_accounts:
 		accounts += value['accounts']
 
+keywords = list(set([_.strip().lower() for _ in keywords if len(_.strip()) > 1]))
+accounts = list(set([_.strip().lower() for _ in accounts if len(_.strip()) > 1]))
+
 REDIS_DB = redis.Redis(host=REDIS_CONFIG['host'], port=REDIS_CONFIG['port'])
 REDIS_NAMESPACE = REDIS_CONFIG['host']
 tweets_channel = '%s:%s' % (REDIS_NAMESPACE, REDIS_CONFIG['channels']['tweets'])
