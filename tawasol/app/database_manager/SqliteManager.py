@@ -66,14 +66,18 @@ class SqliteManager:
 		#print tawasol_dict
 		return tawasol_dict
 
-	def get_userID_from_account(self, account_name):
+	def get_userScreenID_from_account(self, account_name):
 		#print account_name
 		#print self.connection.cursor()
 		cursor = self.connection.cursor()
 		cursor.execute('SELECT userID FROM accounts WHERE accountName=?', (account_name,))
-		user_ids = cursor.fetchall()
-
-		return user_ids
+		ids = cursor.fetchall()
+		user_screen_id = None
+		for id in ids:
+			for iid in id:
+				if iid is not None:
+					user_screen_id = iid
+		return user_screen_id
 
 	def insert_userID_into_accounts(self, user_id, account):
 		cursor = self.connection.cursor()

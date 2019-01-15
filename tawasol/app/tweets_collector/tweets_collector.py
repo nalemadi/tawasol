@@ -12,8 +12,7 @@ __author__ = 'noora'
 def get_accounts(api, accounts):
 	users_ids = []
 	for account in accounts:
-		db_user_ids = sqlite_manager.get_userID_from_account(account)
-		db_user_id = db_user_ids[0][0]
+		db_user_id = sqlite_manager.get_userScreenID_from_account(account)
 		if db_user_id:
 			users_ids.append(str(db_user_id))
 		else:
