@@ -2,6 +2,7 @@ from ..utils.text_operations import simple_clean_text
 
 
 class TweetsAnalyzer():
+
 	def __init__(self):
 		return None
 
@@ -11,17 +12,31 @@ class TweetsAnalyzer():
 		:param tweet:
 		:return: tweet object with extra info
 		"""
-		tweet_text_arr = simple_clean_text(tweet['text'])
+		tweet_text = ''
+		print '=== process tweet ==='
+		if 'retweeted_status' in tweet.keys():
+			if 'extended_tweet' in tweet['retweeted_status'].keys():
+				#print 'this tweet has extended text'
+				tweet_text = tweet['retweeted_status']['extended_tweet']['full_text']
+			else:
+				tweet_text = tweet['text']
+		else:
+			tweet_text = tweet['text']
+
+		#print 'tweet text: ', tweet_text.encode('utf-8')
+		tweet_text_broken = simple_clean_text(tweet_text)
+		#print 'tweet text broken', tweet_text_broken#[x.decode("unicode_escape").encode("utf-8") for x in tweet_text_broken]
+		#print tweet_text_broken
 		tweet_user = tweet['user']['screen_name']
 		collections = []
 		for key, value in users_dict.iteritems():
 			key_broken = key.split('@')
 			user_name = key_broken[0]
-			#check keywords
+
 			keywords = value['keywords']
 			for keyword in keywords:
-				if keyword.lower() in tweet_text_arr:
-					print 'keyword found'
+				if keyword in tweet_text_broken:
+					print 'keyword found:', keyword, ' in tweet_text for', user_name
 					collections.append(user_name+'_tweets')
 
 			#check accounts
@@ -32,42 +47,3 @@ class TweetsAnalyzer():
 					collections.append(user_name + '_tweets')
 
 		return tweet, collections
-
-"""
-	def get_qatar_locations(self):
-		return ['qatar','doha']
-
-	def is_tweet_from_qatar(self, tweet):
-		"""
-"""
-		not used
-		Check whether tweet is from Qatar or not
-		:param tweet: tweet object
-		:return: boolean
-"""
-"""
-		if 'coordinates' not in tweet.keys() and 'user' not in tweet.keys():
-			return False
-
-		if tweet['coordinates'] is not None:
-			lat = tweet['coordinates']['coordinates'][1]
-			lng = tweet['coordinates']['coordinates'][0]
-
-			# Qatar boundingBox 50.7048, 24.4708, 51.7371, 26.2057
-			lat_max, lat_min, lng_max, lng_min = 26.2057, 24.4708, 51.7371, 50.7048
-
-			if lat_min <= lat <= lat_max and lng_min <= lng <= lng_max:
-				return True
-			else:
-				return False
-		if tweet['user']['location'] is None:
-			return False
-		else:
-			qatar_locations = self.get_qatar_locations()
-			user_location = clean_text(tweet['user']['location'].lower())
-			user_locations = user_location.split()
-			for usr_location in user_locations:
-				if usr_location in qatar_locations:
-					return True
-			return False
-"""

@@ -1,3 +1,4 @@
+#coding=utf-8
 #from nltk.tokenize import word_tokenize, sent_tokenize
 #from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
@@ -29,16 +30,21 @@ def simple_clean_text(text):
 	# 1. remove urls
 	text = re.sub(r"http\S+", "", text)
 	# 2. remove puctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-	text = re.sub(r'[^\w\s]','',text)
-	text_broken = text.lower().strip('').split(' ')
-	en_stops = set(stopwords.words('english'))
-	text = ' '.join(ch for ch in text_broken if ch not in en_stops)
-	text = text.lower()
-	txt_arr = text.split(' ')
-	return txt_arr
+	#text = re.sub(r'[^\w\s]','',text)
+	text = re.sub(r'\w+','',text)
+	text_broken = text.lower().strip().split(' ')
+	#en_stops = set(stopwords.words('english'))
+	#text = ' '.join(ch for ch in text_broken if ch not in en_stops)
+	#text = text.lower()
+	#txt_arr = text.split(' ')
+	return text_broken
 
 """
 if __name__ == '__main__':
 	#print simple_clean_text('@SkyNews qatar_mowasalat I would? like to see that though. Maybe next time she scores a goal.')
-	print simple_clean_text('HHHello!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~ nOOOOoora')
+	text = u'برنامج الحقيقة تقديم يوسف علاونة على قناة 24 سعودي الفضائية بعنوان "مرتزقة الاعلام القطري" وجمال ريان ابن سمسار الا… https://t.co/2DKYOMNPbQ'
+	arr = simple_clean_text(text)
+	print [x for x in arr]
+	#unicode(x.decode("unicode_escape").encode("utf-8"))
 """
+

@@ -33,12 +33,20 @@ class TweetProcessor(Process):
 					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
 					processed_tweet = processed_info[0]
 					collections = processed_info[1]
-					print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text']
+					"""
+					if 'retweeted_status' in processed_tweet.keys():
+						if 'extended_tweet' in processed_tweet['retweeted_status'].keys():
+							print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['retweeted_status']['extended_tweet']['full_text'].encode('utf-8')
+					else:
+						print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text'].encode('utf-8')
+					"""
+					print 'tweets_collection_list', self.tweets_collection_list
+					print 'collections', collections
 					for collection in collections:
 						for tweet_collection in self.tweets_collection_list:
 							if collection == tweet_collection.name:
 								tweet_collection.insert_one(processed_tweet)
-								print 'INFO: tweet: ',processed_tweet['text'], 'inserted into:', collection
+								print 'INFO: a tweet inserted into:', collection, ". ", processed_tweet['text'].encode('utf-8'),
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass

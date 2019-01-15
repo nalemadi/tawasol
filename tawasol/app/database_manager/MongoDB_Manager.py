@@ -1,7 +1,6 @@
 import pymongo
 from pymongo import MongoClient
 import logging
-import yaml
 
 __author__ = 'noora'
 
@@ -18,7 +17,7 @@ class mongoDB_manager:
 
 	def connect_to_mongodb(self):
 		try:
-			self.mongo_connection = MongoClient(self.host, self.port, connect=True)
+			self.mongo_connection = MongoClient(self.host, self.port)#, connect=True)
 		except pymongo.errors.ConnectionFailure, e:
 			logging.warn('Problem connecting to : {} \n {}'.format(self.db_name, e))
 

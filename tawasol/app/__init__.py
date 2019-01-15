@@ -16,13 +16,15 @@ sqlite_manager = SqliteManager()
 users_dict = sqlite_manager.get_keywords_accounts_for_user()
 
 #Connect to MongoDb
-db_connector = mongoDB_manager(MONGO_DB_CONFIG)
+mongodb_connector = mongoDB_manager(MONGO_DB_CONFIG)
 tweets_collections_list = []
 keywords = []
 accounts = []
 for key, value in users_dict.iteritems():
-	user_tweets_collection = '%s_%s' % (key, MONGO_DB_CONFIG['tweets_collection'])
-	tweets_collection = db_connector.connect_to_collection(user_tweets_collection)
+	key_broken = key.split('@')
+	user_name = key_broken[0]
+	user_tweets_collection = '%s_%s' % (user_name, MONGO_DB_CONFIG['tweets_collection'])
+	tweets_collection = mongodb_connector.connect_to_collection(user_tweets_collection)
 	tweets_collections_list.append(tweets_collection)
 
 	user_keywords = value['keywords']
