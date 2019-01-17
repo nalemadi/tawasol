@@ -1,5 +1,6 @@
 from tweepy.streaming import StreamListener
 import json
+import time
 
 
 class TweetsListener(StreamListener):
@@ -20,4 +21,7 @@ class TweetsListener(StreamListener):
 
     def on_error(self, status):
         print 'Error in twitter listener, status:', status
-        pass
+        if status == 420:
+            print 'Rate Limit!! ... sleep from 15 minutes,', time.datetime.now()
+            time.sleep(900)  # 15 minutes
+        #pass
