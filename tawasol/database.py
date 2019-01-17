@@ -17,7 +17,6 @@ class Users(UserMixin, db.Model):
 	username = db.Column(db.String)
 	email = db.Column(db.String, primary_key=True)
 	password = db.Column(db.String)
-	authenticated = db.Column(db.Boolean, default=False)
 
 	def is_active(self):
 		"""True, as all users are active."""
@@ -28,11 +27,6 @@ class Users(UserMixin, db.Model):
 		"""Return the email to satisfy Flask-Login's requirements."""
 		#print 'database, userid', self.username
 		return self.email
-
-	def is_authenticated(self):
-		"""Return True if the user is authenticated."""
-		print self.authenticated
-		return self.authenticated
 
 	def is_anonymous(self):
 		"""False, as anonymous users aren't supported."""
@@ -55,7 +49,6 @@ class Keywords(db.Model):
 		return True
 
 	def get_id(self):
-		#print 'database, userid', self.username
 		return self.keywordsID
 
 

@@ -45,8 +45,6 @@ def load_user(user_id):
 @app.route('/new_user', methods=["GET", "POST"])
 def new_user():
 	if request.method == 'POST':
-		print 'submit button pressed'
-		#db.metadata.create_all(db.engine)
 
 		username = request.form['username']
 		email = request.form['email']
@@ -64,8 +62,7 @@ def new_user():
 		user = Users(
 			username=username,
 			email=email,
-			password=pcrypt.generate_password_hash(password),
-			authenticated=False)
+			password=pcrypt.generate_password_hash(password))
 		db.session.add(user)
 		db.session.commit()
 	return render_template('new_user.html')
@@ -81,17 +78,10 @@ def login():
 		if user:
 			print 'user email found:', userEmail
 			if pcrypt.check_password_hash(password):
-				user.authenticated = True
-				#session['curr_user'] = user
-				#db.session.add(user)
-				db.session.commit()
-				print 'update user'
 				login_user(user)
 				next = request.args.get('next')
 				print 'next:', next
-				print user.username, user.authenticated, user.email
-				print 'current_user: ', user
-				return redirect(url_for('profile', current_user=user))#redirect(next or url_for("index"))
+				return redirect(url_for('profile'))#redirect(next or url_for("index"))
 			else:
 				return Response('<p>Password Wrong</p>')
 		else:
@@ -112,7 +102,6 @@ def profile():
 	#
 	user_email = session['user_id']
 	user = Users.query.get(user_email)
-	print 'current user:', user, user_email
 
 	# get keywords from Database for current user
 	keywords = get_all_keywords(user_email)
@@ -235,7 +224,7 @@ def profile():
 			keywords = get_all_keywords(user_email)
 			accounts = get_all_accounts(user_email)
 			#return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
-			return render_template('profile.html', current_user=user, user_keywords=keywords, user_accounts=accounts)
+			return render_template('profile.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
 		else:
 			print 'user not found'
 	else:
@@ -246,7 +235,7 @@ def profile():
 		print 'current user', user_email
 
 		#return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
-		return render_template('profile.html', current_user=user, user_keywords=keywords, user_accounts=accounts)
+		return render_template('profile.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
 
 
 def get_all_keywords(user_email):
@@ -281,18 +270,8 @@ def get_all_accounts(user_email):
 @login_required
 def logout():
 	print '=== logout ==='
-	#
-	#user_test = session['curr_user']
-	#print user_test
-	#
-	username = session['user_id']
-	user = Users.query.get(username)
-	if user:
-		user.authenticated = False
-		#db.session.add(user)
-		db.session.commit()
 	logout_user()
-	return render_template('index.html')
+	return render_template('login.html')
 
 
 @app.route('/contact')

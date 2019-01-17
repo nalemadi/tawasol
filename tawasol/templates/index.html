@@ -47,8 +47,8 @@
                 <li><a href="/contact">Contact</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                {% if current_user.authenticated %}
-                    <li><a href="#" >Hey, {{current_user.username}}!</a></li>
+                {% if authenticated %}
+                    <li><a href="#" >Hey, {{current_username}}!</a></li>
                     <li><a href="/logout"><span id="logout">Logout</span></a></li>
                     <li><a href="/profile"><span id="profile">Profile</span></a></li>
                 {% else %}
