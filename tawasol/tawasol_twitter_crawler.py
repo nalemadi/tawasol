@@ -24,7 +24,7 @@ print json.dumps(users_dict, ensure_ascii=False).encode('utf8')
 print tweets_channel
 print REDIS_DB
 
-proxy_index = 1
+proxy_index = 10
 proxies_list = qcri_proxies
 os.environ['http_proxy']="[REDACTED_PROXYADD]"+proxies_list[proxy_index]+":[REDACTED_VALUE]"
 
