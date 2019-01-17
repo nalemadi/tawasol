@@ -11,6 +11,7 @@ __author__ = 'noora'
 
 def get_accounts(api, accounts):
 	users_ids = []
+	"""
 	for account in accounts:
 		db_user_id = sqlite_manager.get_userScreenID_from_account(account)
 		if db_user_id:
@@ -25,6 +26,15 @@ def get_accounts(api, accounts):
 			except tweepy.TweepError as e:
 				print 'tweets_collector:', e, 'account: ', account
 				pass
+	"""
+	for account in accounts:
+		try:
+			user = api.get_user(screen_name=account)
+			if user:
+				users_ids.append(str(user.id))
+		except tweepy.TweepError as e:
+			print 'tweets_collector:', e, 'account: ', account
+			pass
 	###
 	users_accounts = ','.join(users_ids)
 	return users_accounts
