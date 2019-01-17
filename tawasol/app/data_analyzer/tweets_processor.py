@@ -41,7 +41,7 @@ class TweetProcessor(Process):
 						print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text'].encode('utf-8')
 					"""
 					print 'tweets_collection_list', self.tweets_collection_list
-					print 'collections', collections
+					print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text'].encode('utf-8')
 					for collection in collections:
 						for tweet_collection in self.tweets_collection_list:
 							if collection == tweet_collection.name:
