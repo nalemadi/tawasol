@@ -36,7 +36,8 @@ def get_accounts(api, accounts):
 			print 'tweets_collector:', e, 'account: ', account
 			pass
 	###
-	users_accounts = ','.join(users_ids)
+	#users_accounts = ','.join(users_ids)
+	users_accounts = users_ids
 	return users_accounts
 
 
