@@ -13,6 +13,13 @@ class TweetProcessor(Process):
 		super(TweetProcessor, self).__init__()
 
 		self.tweets_collection_list = tweets_collection_list
+		##
+		undefined_tweets_collection = None
+		for tweets_collection in tweets_collection_list:
+			if tweets_collection.name == 'undefined_tweets':
+				undefined_tweets_collection = tweets_collection
+		self.undefined_tweets_collection = undefined_tweets_collection
+		##
 		self.users_dict = users_dict
 
 		# redis channel
@@ -42,11 +49,15 @@ class TweetProcessor(Process):
 					"""
 					print 'tweets_collection_list', self.tweets_collection_list
 					print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text'].encode('utf-8')
-					for collection in collections:
-						for tweet_collection in self.tweets_collection_list:
-							if collection == tweet_collection.name:
-								tweet_collection.insert_one(processed_tweet)
-								print 'INFO: a tweet inserted into:', collection, ". ", processed_tweet['text'].encode('utf-8'),
+					if len(collections) > 0:
+						for collection in collections:
+							for tweet_collection in self.tweets_collection_list:
+								if collection == tweet_collection.name:
+									tweet_collection.insert_one(processed_tweet)
+									print 'INFO: a tweet inserted into:', collection, ". ", processed_tweet['text'].encode('utf-8')
+					else:
+						self.undefined_tweets_collection.insert_one(processed_tweet)
+						print 'INFO: a tweet inserted into Undefined collection:', processed_tweet['text'].encode('utf-8')
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass

@@ -1,4 +1,4 @@
-from ..utils.text_operations import simple_clean_text
+from ..utils.text_operations import simple_clean_text, simple_clean_text_ar
 
 
 class TweetsAnalyzer():
@@ -23,10 +23,14 @@ class TweetsAnalyzer():
 		else:
 			tweet_text = tweet['text']
 
+		if tweet['lang'] == 'ar':
+			tweet_text_broken = simple_clean_text_ar(tweet_text)
+		else:
+			tweet_text_broken = simple_clean_text(tweet_text)
 		#print 'tweet text: ', tweet_text.encode('utf-8')
-		tweet_text_broken = simple_clean_text(tweet_text)
+		#tweet_text_broken = simple_clean_text(tweet_text)
 		#print 'tweet text broken', tweet_text_broken#[x.decode("unicode_escape").encode("utf-8") for x in tweet_text_broken]
-		#print tweet_text_broken
+		print tweet_text_broken
 		tweet_user = tweet['user']['screen_name']
 		collections = []
 		for key, value in users_dict.iteritems():
