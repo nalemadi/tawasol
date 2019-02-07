@@ -17,7 +17,8 @@ users_dict = sqlite_manager.get_keywords_accounts_for_user()
 
 #Connect to MongoDb
 mongodb_connector = mongoDB_manager(MONGO_DB_CONFIG)
-undefined_tweets_collection = '%s_%s' % ('undefined', MONGO_DB_CONFIG['tweets_collection'])
+undefined_tweets_collection_name = '%s_%s' % ('undefined', MONGO_DB_CONFIG['tweets_collection'])
+undefined_tweets_collection = mongodb_connector.connect_to_collection(undefined_tweets_collection_name)
 tweets_collections_list = []
 tweets_collections_list.append(undefined_tweets_collection)
 keywords = []
