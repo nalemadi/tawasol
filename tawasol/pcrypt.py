@@ -8,11 +8,14 @@ def generate_password_hash(password):
 	return hashed #hashlib.sha512(password + salt).hexdigest()
 
 
-def check_password_hash(password):
-	salt = bcrypt.gensalt()
-	hashed = bcrypt.hashpw(password.encode("utf-8"), salt)
-	hashed.find(salt)
-	if hashed == bcrypt.hashpw(password.encode("utf-8"), hashed):
+def check_password_hash(password, user):
+	#salt = bcrypt.gensalt()
+	#hashed = bcrypt.hashpw(password.encode("utf-8"), salt)
+	#print 'hash pw', hashed, ',', bcrypt.hashpw(password.encode("utf-8"), hashed)#hashed.find(salt)
+	##
+	#print 'check pw', bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
+	##
+	if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
 		print "It Matches!"
 		return True
 	else:

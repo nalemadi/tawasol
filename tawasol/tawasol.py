@@ -77,7 +77,7 @@ def login():
 		user = Users.query.get(userEmail)
 		if user:
 			print 'user email found:', userEmail
-			if pcrypt.check_password_hash(password):
+			if pcrypt.check_password_hash(password, user):
 				login_user(user)
 				next = request.args.get('next')
 				print 'next:', next
@@ -89,7 +89,7 @@ def login():
 			print 'user not found'
 	else:
 		print "login, GET"
-		return render_template('login.html')
+		return render_template('login.html', message='user not found')
 
 
 @app.route("/profile", methods=["GET", "POST"])
