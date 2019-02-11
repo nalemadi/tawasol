@@ -1,4 +1,4 @@
-host: '10.2.0.139'
+host: '[REDACTED_IP]'
 port: [REDACTED_PORT]
 db_name: 'tawasol'
 tweets_collection: 'tweets'
