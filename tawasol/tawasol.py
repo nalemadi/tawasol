@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, redirect, url_for, request, session, abort
+from flask import Flask, render_template, Response, redirect, url_for, request, session, abort, flash
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 from database import Users, Keywords, Accounts, db
 import pcrypt
@@ -28,11 +28,6 @@ class Users(UserMixin):
 	def __repr__(self):
 		return "%s/%s" % (self.name, self.password)
 """
-"""
-@app.route('/')
-def hello_world():
-	return 'Hello World!'
-"""
 
 # callback to reload the user object
 @login_manager.user_loader
@@ -52,19 +47,33 @@ def new_user():
 		repassword = request.form['repassword']
 
 		try:
+			print 'assert', password, repassword
 			assert password == repassword
+			user = Users(
+				username=username,
+				email=email,
+				password=pcrypt.generate_password_hash(password))
+			db.session.add(user)
+			db.session.commit()
+			login_user(user)
+			return redirect(url_for('crawling_settings'))
 		except AssertionError as error:
-			print error
+			print 'assertion error', error
+			flash('Those passwords did not match. Try again', 'wrong_password')
 			return render_template('new_user.html')
 		except Exception as exception:
-			print exception
+			print 'new user exception', exception
+			flash('Those passwords did not match. Try again', 'wrong_password')
 			return render_template('new_user.html')
-		user = Users(
-			username=username,
-			email=email,
-			password=pcrypt.generate_password_hash(password))
-		db.session.add(user)
-		db.session.commit()
+
+		# user = Users(
+		# 	username=username,
+		# 	email=email,
+		# 	password=pcrypt.generate_password_hash(password))
+		# db.session.add(user)
+		# db.session.commit()
+		# login_user(user)
+		# return redirect(url_for('crawling_settings'))
 	return render_template('new_user.html')
 
 
@@ -81,22 +90,23 @@ def login():
 				login_user(user)
 				next = request.args.get('next')
 				print 'next:', next
-				return redirect(url_for('profile'))#redirect(next or url_for("index"))
+				return redirect(url_for('crawling_settings'))#redirect(next or url_for("index"))
 			else:
-				return Response('<p>Password Wrong</p>')
+				flash('Wrong password. Try again', 'wrong_password')
+				return render_template('index.html')
 		else:
-			return Response('<p>user not found</p>')
-			print 'user not found'
+			flash('Username not found', 'user_not_found')
+			return render_template('index.html')
 	else:
 		print "login, GET"
-		return render_template('login.html', message='user not found')
+		return render_template('index.html')
 
 
-@app.route("/profile", methods=["GET", "POST"])
+@app.route("/crawling_settings", methods=["GET", "POST"])
 @login_required
-def profile():
+def crawling_settings():
 	#
-	print '=== profile ==='
+	print '=== crawling_settings ==='
 	#user_test = session['curr_user']
 	#print user_test
 	#
@@ -125,6 +135,7 @@ def profile():
 			else:
 				print 'empty submitted keywords'
 				keywords_broken = None
+
 			if submitted_accounts:
 				print 'submitted_accounts is not None', submitted_accounts
 				accounts_broken = submitted_accounts.split(',')
@@ -140,6 +151,10 @@ def profile():
 
 					new_keywords = list(set(keywords_broken) - set(keywords_from_DB))
 					removed_keywords = list(set(keywords_from_DB) - set(keywords_broken))
+
+					if not new_keywords and not removed_keywords:
+						flash('There is no changes', 'no_update')
+						return render_template('crawling_settings.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
 
 					# add new keywords
 					# TODO: Noora: Check that you are not adding the same keyword twice.
@@ -186,6 +201,10 @@ def profile():
 					new_accounts = list(set(accounts_broken) - set(accounts_from_DB))
 					removed_accounts = list(set(accounts_from_DB) - set(accounts_broken))
 
+					if not new_accounts and not removed_accounts:
+						flash('There is no changes', 'no_update')
+						return render_template('crawling_settings.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
+
 					# add new accounts
 					for new_account in new_accounts:
 						f_account = Accounts(
@@ -224,18 +243,20 @@ def profile():
 			keywords = get_all_keywords(user_email)
 			accounts = get_all_accounts(user_email)
 			#return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
-			return render_template('profile.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
+			flash('Keywords and Accounts are updated successfully', 'update_successfully')
+			return render_template('crawling_settings.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
 		else:
-			print 'user not found'
+			flash('Username not found', 'user_not_found')
+			return render_template('login.html')
 	else:
 		#Accounts.query.delete() #debuging
 		#Keywords.query.delete() #debuging
 		#db.session.commit() #debuging
-		print 'Profile GET'
+		print 'crawling_settings GET'
 		print 'current user', user_email
 
 		#return render_template('profile.html', username=user.username, user_keywords=keywords, user_accounts=accounts)
-		return render_template('profile.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
+		return render_template('crawling_settings.html', authenticated=True, current_username=user.username, user_keywords=keywords, user_accounts=accounts)
 
 
 def get_all_keywords(user_email):
@@ -266,12 +287,56 @@ def get_all_accounts(user_email):
 	return accounts
 
 
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+	print '=== Profile ==='
+	user_email = session['user_id']
+	user = Users.query.get(user_email)
+	if user:
+		if request.method == 'POST':
+			print 'profile user', user
+			password = request.form['password']
+			if user:
+				if pcrypt.check_password_hash(password, user):
+					new_password = request.form['new_password']
+					renew_password = request.form['renew_password']
+					try:
+						assert new_password == renew_password
+
+						#check if current and new password are similar
+						if password == new_password:
+							flash('The new password is similar to current password. Try again', 'wrong_password')
+							return render_template('profile.html', authenticated=True, current_user=user,current_username=user.username)
+						else:
+							# generate new encrypted password
+							add_password = pcrypt.generate_password_hash(new_password)
+							Users.query.filter_by(email=user_email).update(dict(password=add_password))
+							db.session.commit()
+							flash('Password Changed Successfully', 'password_changed')
+							return render_template('profile.html', authenticated=True, current_user=user, current_username=user.username)
+					except AssertionError as error:
+						print error
+						flash('Those passwords did not match. Try again', 'wrong_password')
+						return render_template('profile.html', authenticated=True, current_user=user, current_username=user.username)
+					except Exception as exception:
+						print exception
+						flash('Error: Those passwords did not match. Try again', 'wrong_password')
+						return render_template('profile.html', authenticated=True, current_user=user, current_username=user.username)
+				else:
+					flash('Wrong password', 'wrong_password')
+					return render_template('profile.html', authenticated=True, current_user=user, current_username=user.username)
+		else:
+			print 'GET'
+			return render_template('profile.html', authenticated=True, current_user=user, current_username=user.username)
+
+	return render_template('index.html')
+
 @app.route("/logout")
 @login_required
 def logout():
 	print '=== logout ==='
 	logout_user()
-	return render_template('login.html')
+	return render_template('index.html')
 
 
 @app.route('/contact')

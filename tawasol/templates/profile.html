@@ -1,20 +1,48 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
 {% block body %}
+{% include "navbar.html" %}
     <div class="row" style="margin-top:5%;">
         <div class="col-lg-4 col-lg-offset-4">
             <h1>{{current_username}}'s Profile</h1>
             <form action="" method="POST" role="form">
                 <div class="form-group">
-                    <label for="keywords">Keywords</label>
-                    <input type="keywords" class="form-control" name="keywords" id="keywords" aria-describedby="keywordsHelp"
-                           placeholder="Enter keywords; for example: keyword1,keyword2, ..." value="{% if user_keywords %}{{user_keywords}}{% endif%}">
+                    <label for="username">Username</label>
+                    <input type="username" class="form-control" name="username" id="username" aria-describedby="usernameHelp"
+                           placeholder="{{current_user.username}}" readonly="readonly">
                 </div>
                 <div class="form-group">
-                    <label for="accounts">Accounts</label>
-                    <input type="accounts" class="form-control" name="accounts" id="accounts"
-                           placeholder="Enter Accounts; for example: account1,account2, ..." value="{% if user_accounts %}{{user_accounts}}{% endif%}">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="{{current_user.email}}" readonly="readonly">
                 </div>
-                <button type="submit" class="btn btn-success">Save</button>
+                <div class="form-group">
+                    <label for="password">Current Password</label>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="&#x2022&#x2022&#x2022&#x2022&#x2022" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" class="form-control" name="new_password" id="new_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="renew_password">Re-enter New Password</label>
+                    <input type="password" class="form-control" name="renew_password" id="renew_password" required>
+                </div>
+                <div class="form-group">
+                    <button id="save" type="submit" class="btn btn-success">Save</button>
+                    {% with messages = get_flashed_messages(category_filter=["wrong_password"]) %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="aler alert-danger">{{message}}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["password_changed"]) %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="aler alert-success">{{message}}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
             </form>
         </div>
     </div>
