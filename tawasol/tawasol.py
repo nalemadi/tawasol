@@ -30,6 +30,8 @@ succ_ACC_CHANGED = 'Accounts are successfully updated'
 err_NEW_PASS_SIMILAR = 'The new password is similar to current password. Try again'
 succ_CHANGE_PASS = 'Password Changed Successfully'
 err_EMAIL_EXIST = 'This email is already registered'
+warn_SIMILAR_USERNAME = 'Similar username'
+succ_USERNAME_CHANGED = 'Username is successfully updated'
 
 # alert-messages-categories
 user_not_exist_cat = 'user_not_exist'
@@ -39,6 +41,8 @@ wrong_password_cat = 'wrong_password'
 no_update_cat = 'no_update'
 settings_changed_cat = 'settings_changed'
 password_changed_cat = 'password_changed'
+similar_user_cat = 'similar_user'
+profile_changed_cat = 'profile_changed'
 
 
 # callback to reload the user object
@@ -309,6 +313,11 @@ def update_password(email, new_password):
 	db.session.commit()
 
 
+def update_username(email, username):
+	Users.query.filter_by(email=email).update(dict(username=username))
+	db.session.commit()
+
+
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
@@ -319,27 +328,40 @@ def profile():
 		current_username = user.username.title()
 		if request.method == 'POST':
 			print 'profile user', user
-			password = request.form['password']
-			if pcrypt.check_password_hash(password, user):
-				new_password = request.form['new_password']
-				renew_password = request.form['renew_password']
-				try:
-					assert new_password == renew_password
-					#check if current and new password are similar
-					if password == new_password:
-						flash(err_NEW_PASS_SIMILAR, wrong_password_cat)
+			if 'password' in request.form.keys():
+				password = request.form['password']
+				if pcrypt.check_password_hash(password, user):
+					new_password = request.form['new_password']
+					renew_password = request.form['renew_password']
+					try:
+						assert new_password == renew_password
+						#check if current and new password are similar
+						if password == new_password:
+							flash(err_NEW_PASS_SIMILAR, wrong_password_cat)
+						else:
+							# generate new encrypted password
+							update_password(user_email, new_password)
+							flash(succ_CHANGE_PASS, password_changed_cat)
+					except AssertionError as error:
+						print error
+						flash(err_PASS_NOT_MATCH, wrong_password_cat)
+					except Exception as exception:
+						print exception
+						flash(err_PASS_NOT_MATCH, wrong_password_cat)
+				else:
+					flash(err_WRONG_PASS, wrong_password_cat)
+				#return render_template('profile.html', authenticated=True, current_user=user, current_username=current_username)
+			###
+			elif 'username' in request.form.keys():
+				username = request.form['username']
+				if username:
+					if username == user.username:
+						flash(warn_SIMILAR_USERNAME, similar_user_cat)
 					else:
-						# generate new encrypted password
-						update_password(user_email, new_password)
-						flash(succ_CHANGE_PASS, password_changed_cat)
-				except AssertionError as error:
-					print error
-					flash(err_PASS_NOT_MATCH, wrong_password_cat)
-				except Exception as exception:
-					print exception
-					flash(err_PASS_NOT_MATCH, wrong_password_cat)
-			else:
-				flash(err_WRONG_PASS, wrong_password_cat)
+						update_username(user_email, username)
+						flash(succ_USERNAME_CHANGED, profile_changed_cat)
+				else:
+					flash(warn_SIMILAR_USERNAME, similar_user_cat)
 			return render_template('profile.html', authenticated=True, current_user=user, current_username=current_username)
 		else:
 			print 'GET'
