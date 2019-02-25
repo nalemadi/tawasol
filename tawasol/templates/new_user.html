@@ -21,7 +21,7 @@
                 <div class="form-group">
                     <label for="inputReenterPassword">Re-enter Password</label>
                     <input type="password" class="form-control" name="repassword" id="inputReenterPassword" placeholder="Re-enter Password" required>
-                    {% with messages = get_flashed_messages(category_filter=["wrong_password"]) %}
+                    {% with messages = get_flashed_messages(category_filter=["wrong_password", "user_exist"]) %}
                         {% if messages %}
                             {% for message in messages %}
                                 <div class="aler alert-danger">{{message}}</div>

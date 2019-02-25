@@ -8,12 +8,12 @@
                 <div class="form-group">
                     <label for="keywords">Keywords</label>
                     <input type="keywords" class="form-control" name="keywords" id="keywords" aria-describedby="keywordsHelp"
-                           placeholder="Enter keywords; for example: keyword1,keyword2, ..." value="{% if user_keywords %}{{user_keywords}}{% endif%}" required>
+                           placeholder="Enter keywords; for example: keyword1,keyword2, ..." value="{% if user_keywords %}{{user_keywords}}{% endif%}">
                 </div>
                 <div class="form-group">
                     <label for="accounts">Accounts</label>
                     <input type="accounts" class="form-control" name="accounts" id="accounts"
-                           placeholder="Enter Accounts; for example: account1,account2, ..." value="{% if user_accounts %}{{user_accounts}}{% endif%}" required>
+                           placeholder="Enter Accounts; for example: account1,account2, ..." value="{% if user_accounts %}{{user_accounts}}{% endif%}">
                 </div>
                 <button type="submit" class="btn btn-success">Save</button>
                 {% with messages = get_flashed_messages(category_filter=["wrong_password"]) %}
@@ -23,7 +23,7 @@
                             {% endfor %}
                         {% endif %}
                     {% endwith %}
-                    {% with messages = get_flashed_messages(category_filter=["update_successfully"]) %}
+                    {% with messages = get_flashed_messages(category_filter=["settings_changed"]) %}
                         {% if messages %}
                             {% for message in messages %}
                                 <div class="aler alert-success">{{message}}</div>
