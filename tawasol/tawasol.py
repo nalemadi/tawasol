@@ -244,7 +244,7 @@ def get_all_accounts(user_email):
 def insert_into_keywords(array, user_email):
 	for n_keyword in array:
 		if n_keyword:
-			exists = db.session.query(Keywords.keywordID).filter_by(keywordName=n_keyword).scalar()
+			exists = db.session.query(Keywords.keywordID).filter_by(keywordName=n_keyword).filter_by(email=user_email).scalar()
 			print 'keyword', n_keyword, 'exists:', exists
 			if not exists:
 				keyword_insert = Keywords(
@@ -258,7 +258,7 @@ def insert_into_keywords(array, user_email):
 def insert_into_accounts(array, user_email):
 	for account in array:
 		if account:
-			exists = db.session.query(Accounts.accountID).filter_by(accountName=account).scalar()
+			exists = db.session.query(Accounts.accountID).filter_by(accountName=account).filter_by(email=user_email).scalar()
 			print 'account', account, 'exists:', exists
 			if not exists:
 				f_account = Accounts(
