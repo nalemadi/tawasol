@@ -88,7 +88,7 @@ def new_user():
 
 @app.route('/get_updated_info/<user_id>', methods=['GET','POST'])
 def get_updated_info(user_id):
-	if user_id == session['user_id']:
+	if user_id:
 		broken = user_id.split('@')
 		user_name = broken[0].lower()
 		#read from redis channel
