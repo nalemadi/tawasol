@@ -86,13 +86,16 @@ def new_user():
 	else:
 		return render_template('new_user.html')
 
-@app.route('/get_updated_info/<user_id>', methods=['GET','POST'])
+@app.route('/get_tweets/<user_id>', methods=['GET','POST'])
 def get_updated_info(user_id):
 	if user_id:
 		broken = user_id.split('@')
 		user_name = broken[0].lower()
 		#read from redis channel
-		data = REDIS_DB.lrange(results_channels[user_name], 0, -1)#[0]
+		tweets = REDIS_DB.lrange(results_channels[user_name], 0, -1)#[0]
+		data = {}
+		data['tweets'] = tweets
+		data['tweets_count'] = len(tweets)
 		json_data = json.loads(data)
 		return jsonify(json_data)
 	else:
