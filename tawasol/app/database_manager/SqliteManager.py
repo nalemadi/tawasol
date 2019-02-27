@@ -3,6 +3,7 @@
 
 import sqlite3
 from sqlite3 import Error
+import logging
 
 
 class SqliteManager:
@@ -21,7 +22,7 @@ class SqliteManager:
 			connection = sqlite3.connect(self.database_file)
 			return connection
 		except Error as e:
-			print 'error', e
+			logging.warn('Problem in sqlite: %s' % e)
 			return None
 
 	def select_all_users(self):
@@ -31,14 +32,10 @@ class SqliteManager:
 		:return: users list
 		"""
 		cursor = self.connection.cursor()
-		#cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-		#print cursor.fetchall()
 		cursor.execute('SELECT * FROM users')
-
 		rows = cursor.fetchall()
 
 		users = [row[1] for row in rows]
-		#print self.users
 		return users
 
 	def get_keywords_accounts_for_user(self):
@@ -49,26 +46,20 @@ class SqliteManager:
 		tawasol_dict = {}
 		cursor = self.connection.cursor()
 		for user in self.users:
-			#print user,
 			cursor.execute('SELECT * FROM keywords WHERE email=?', (user,))
 			hashtags_rows = cursor.fetchall()
 			hashtags = [row[1] for row in hashtags_rows]
-			#print hashtags,
 			##
 			cursor.execute('SELECT * FROM accounts WHERE email=?', (user,))
 			accounts_rows = cursor.fetchall()
 			accounts = [row[1] for row in accounts_rows]
-			#print accounts
 			user_dict = {}
 			user_dict['keywords'] = hashtags
 			user_dict['accounts'] = accounts
 			tawasol_dict[user] = user_dict
-		#print tawasol_dict
 		return tawasol_dict
 
 	def get_userScreenID_from_account(self, account_name):
-		#print account_name
-		#print self.connection.cursor()
 		cursor = self.connection.cursor()
 		cursor.execute('SELECT userID FROM accounts WHERE accountName=?', (account_name,))
 		ids = cursor.fetchall()

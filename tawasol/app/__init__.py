@@ -23,9 +23,17 @@ tweets_collections_list = []
 tweets_collections_list.append(undefined_tweets_collection)
 keywords = []
 accounts = []
+
+# Redis Configuration
+REDIS_DB = redis.Redis(host=REDIS_CONFIG['host'], port=REDIS_CONFIG['port'])
+REDIS_NAMESPACE = REDIS_CONFIG['host']
+tweets_channel = '%s:%s' % (REDIS_NAMESPACE, REDIS_CONFIG['channels']['tweets'])
+##
+results_channels = {}
 for key, value in users_dict.iteritems():
 	key_broken = key.split('@')
-	user_name = key_broken[0]
+	user_name = key_broken[0].lower()
+	results_channels[user_name] = '%s:%s_%s' % (REDIS_NAMESPACE, REDIS_CONFIG['channels']['results'], user_name)
 	user_tweets_collection = '%s_%s' % (user_name, MONGO_DB_CONFIG['tweets_collection'])
 	tweets_collection = mongodb_connector.connect_to_collection(user_tweets_collection)
 	tweets_collections_list.append(tweets_collection)
@@ -40,7 +48,3 @@ for key, value in users_dict.iteritems():
 
 keywords = list(set([_.strip().lower() for _ in keywords if len(_.strip()) > 1]))
 accounts = list(set([_.strip().lower() for _ in accounts if len(_.strip()) > 1]))
-
-REDIS_DB = redis.Redis(host=REDIS_CONFIG['host'], port=REDIS_CONFIG['port'])
-REDIS_NAMESPACE = REDIS_CONFIG['host']
-tweets_channel = '%s:%s' % (REDIS_NAMESPACE, REDIS_CONFIG['channels']['tweets'])

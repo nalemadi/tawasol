@@ -9,7 +9,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 class TweetProcessor(Process):
 
-	def __init__(self, redis_db, tweets_channel, tweets_collection_list, users_dict):
+	def __init__(self, redis_db, tweets_channel, results_channels, tweets_collection_list, users_dict):
 		super(TweetProcessor, self).__init__()
 
 		self.tweets_collection_list = tweets_collection_list
@@ -25,6 +25,7 @@ class TweetProcessor(Process):
 		# redis channel
 		self.redis_db = redis_db
 		self.tweets_channel = tweets_channel
+		self.results_channel = results_channels
 
 		self.tweetsAnalyzer = TweetsAnalyzer()
 
@@ -40,24 +41,21 @@ class TweetProcessor(Process):
 					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
 					processed_tweet = processed_info[0]
 					collections = processed_info[1]
-					"""
-					if 'retweeted_status' in processed_tweet.keys():
-						if 'extended_tweet' in processed_tweet['retweeted_status'].keys():
-							print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['retweeted_status']['extended_tweet']['full_text'].encode('utf-8')
-					else:
-						print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text'].encode('utf-8')
-					"""
+					user_name = processed_info[2]
 					print 'tweets_collection_list', self.tweets_collection_list
 					print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text'].encode('utf-8')
 					if len(collections) > 0:
 						for collection in collections:
 							for tweet_collection in self.tweets_collection_list:
 								if collection == tweet_collection.name:
+									self.redis_db.rpush(self.results_channels[user_name], json.dumps(processed_tweet))
+									self.redis_db.ltrim(self.results_channels[user_name], -100000, -1)
+									##
 									tweet_collection.insert_one(processed_tweet)
-									print 'INFO: a tweet inserted into:', collection, ". ", processed_tweet['text'].encode('utf-8')
+									logging.info('tweet is inserted into: %s . tweet: %s' % (collection, processed_tweet['text'].encode('utf-8')))
 					else:
 						self.undefined_tweets_collection.insert_one(processed_tweet)
-						print 'INFO: a tweet inserted into Undefined collection:', processed_tweet['text'].encode('utf-8')
+						logging.info('tweet is inserted into Undefined collection: %s' % processed_tweet['text'].encode('utf-8'))
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass

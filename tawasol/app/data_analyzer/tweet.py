@@ -1,5 +1,4 @@
 
-
 class Tweet():
     def __init__(self, tweet, time_index):
         self.tweet_id = int(tweet['id'])
@@ -9,7 +8,7 @@ class Tweet():
         self.time_index = time_index
 
         # name 
-        names = tweet['user']['name'].split(' ')
+        self.names = tweet['user']['name'].split(' ')
 
         # lang 
         self.lang = tweet['lang']
@@ -26,9 +25,6 @@ class Tweet():
         # hashtags 
         self.hashtags = [x.get(u'text') for x in tweet.get('entities').get('hashtags')]
 
-        # doha zone 
-        self.city_zone_id = int(tweet['city_zone_id'])
-
 
         # user profile 
         self.user_profile = {'frequency': 1, 'uid': self.tweet_id, 'user_bio': tweet['user']['description'], 'user_img': tweet['user']['profile_image_url'], 'user_name': self.screen_name}
@@ -36,11 +32,6 @@ class Tweet():
         # tweet emotion 
         self.emotion_score = tweet['emotion']
 
-        # tweet city -- Added by Sofiane
-        if 'city_collection' in tweet.keys():
-            self.city_collection = tweet['city_collection']
-        else:
-            self.city_collection = 'Undefined'
         # Get images
         if tweet.get('entities',{}).get('media',None):
             if tweet['coordinates'] is not None:

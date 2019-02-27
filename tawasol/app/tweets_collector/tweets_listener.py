@@ -2,6 +2,7 @@ from tweepy.streaming import StreamListener
 import json
 import datetime
 import time
+import logging
 
 
 class TweetsListener(StreamListener):
@@ -21,8 +22,8 @@ class TweetsListener(StreamListener):
             pass
 
     def on_error(self, status):
-        print 'Error in twitter listener, status:', status
+        logging.warn('Error in twitter listener, status: %s' % status)
         if status == 420:
-            print 'Rate Limit!! ... sleep from 15 minutes,', datetime.datetime.now()
+            logging.info('Rate Limit!! ... sleep from 15 minutes, %s' % datetime.datetime.now())
             time.sleep(900)  # 15 minutes
         #pass

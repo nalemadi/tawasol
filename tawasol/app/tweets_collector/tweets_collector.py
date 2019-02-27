@@ -33,7 +33,7 @@ def get_accounts(api, accounts):
 			if user:
 				users_ids.append(str(user.id))
 		except tweepy.TweepError as e:
-			print 'tweets_collector:', e, 'account: ', account
+			logging.info('Exception: tweets_collector: {} account: {}'.format(e, account))
 			pass
 	###
 	#users_accounts = ','.join(users_ids)
@@ -46,7 +46,7 @@ def tweets_collector(twitter_key, hashtags, accounts, redis_db, tweets_channel):
 		Listens for ever for tweets about hashtags in keywords and accounts in accounts. Write these tweets to Redis Channel.
 		:return: Tweets matching some keywords
 	"""
-	print 'tweets collector'
+	logging.info('Start tweets collector')
 	auth = OAuthHandler(twitter_key['consumer_key'], twitter_key['consumer_secret'])
 	auth.set_access_token(twitter_key['access_token'], twitter_key['access_token_secret'])
 	api = tweepy.API(auth)
@@ -62,5 +62,5 @@ def tweets_collector(twitter_key, hashtags, accounts, redis_db, tweets_channel):
 			stream.filter(track=hashtags, follow=users_accounts)
 
 		except Exception as e:
-			print 'Something went wrong with the listener, the exception is:', e
+			logging.warn('Something went wrong with the listener, the exception is %s' % e)
 			continue

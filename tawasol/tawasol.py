@@ -1,7 +1,9 @@
-from flask import Flask, render_template, Response, redirect, url_for, request, session, flash
+from flask import Flask, render_template, Response, redirect, url_for, request, session, flash, jsonify
 from flask_login import LoginManager, login_required, login_user, logout_user
-from database import Users, Keywords, Accounts, db
-import pcrypt
+from tawasol_api.database import Users, Keywords, Accounts, db
+from tawasol_api import pcrypt
+from app import results_channels, REDIS_DB
+import json
 
 app = Flask(__name__)
 
@@ -73,7 +75,7 @@ def new_user():
 				db.session.add(user)
 				db.session.commit()
 				login_user(user)
-				return redirect(url_for('crawling_settings'))
+				return redirect(url_for('home'))
 			except AssertionError as error:
 				print 'assertion error', error
 				flash(err_PASS_NOT_MATCH, wrong_password_cat)
@@ -84,6 +86,26 @@ def new_user():
 	else:
 		return render_template('new_user.html')
 
+@app.route('/get_updated_info/<user_id>', methods=['GET','POST'])
+def get_updated_info(user_id):
+	if user_id == session['user_id']:
+		broken = user_id.split('@')
+		user_name = broken[0].lower()
+		#read from redis channel
+		data = REDIS_DB.lrange(results_channels[user_name], 0, -1)#[0]
+		json_data = json.loads(data)
+		return jsonify(json_data)
+	else:
+		return None
+
+
+@app.route("/home", methods=["GET", "POST"])
+@login_required
+def home():
+	user_email = session['user_id']
+	user = Users.query.get(user_email)
+	current_username = user.username.title()
+	return render_template('home.html', authenticated=True, current_username=current_username)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -98,7 +120,7 @@ def login():
 				login_user(user)
 				next = request.args.get('next')
 				print 'next:', next
-				return redirect(url_for('crawling_settings'))#redirect(next or url_for("index"))
+				return redirect(url_for('home'))#redirect(next or url_for("index"))
 			else:
 				flash(err_WRONG_PASS, wrong_password_cat)
 		else:
@@ -420,7 +442,13 @@ def page_not_found(e):
 	return Response('<p>Login failed</p>')
 
 
+def get_total_users():
+	users_count = db.session.query(Users).count()
+	return users_count
+
+
 @app.route('/')
 def index():
 	print '== index =='
-	return render_template('index.html')
+	users_count = get_total_users()
+	return render_template('index.html', total_users=users_count)

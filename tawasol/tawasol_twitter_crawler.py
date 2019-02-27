@@ -1,7 +1,7 @@
 import os
 from app.utils.consts import qcri_proxies
 from app import MONGO_DB_CONFIG, REDIS_CONFIG, twitter_keys, tweets_collections_list, \
-	keywords, accounts, REDIS_DB, tweets_channel, users_dict
+	keywords, accounts, REDIS_DB, tweets_channel, users_dict, results_channels
 from app.tweets_collector.tweets_collector import tweets_collector
 from app.data_analyzer.tweets_processor import TweetProcessor
 from multiprocessing import Process
@@ -28,7 +28,7 @@ proxy_index = -4
 proxies_list = qcri_proxies
 os.environ['http_proxy']="[REDACTED_PROXYADD]"+proxies_list[proxy_index]+":[REDACTED_VALUE]"
 
-tweet_processor = TweetProcessor(REDIS_DB, tweets_channel, tweets_collections_list, users_dict)
+tweet_processor = TweetProcessor(REDIS_DB, tweets_channel, results_channels, tweets_collections_list, users_dict)
 tweet_processor.start()
 
 twitter_collector_thr = Process(target=tweets_collector, args=(twitter_keys, keywords, accounts, REDIS_DB, tweets_channel,))

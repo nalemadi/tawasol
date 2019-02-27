@@ -3,3 +3,4 @@ port: [REDACTED_VALUE]
 hostname: tawasol_prod
 channels:
   tweets: tweets
+  results: results_prod

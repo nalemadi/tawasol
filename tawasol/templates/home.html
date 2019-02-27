@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block body %}
+{% include "navbar.html" %}
+   <div class="row" style="margin-top:5%">
+        <div class="col-lg-12">
+            <h1>{{current_username}}'s Dashboard</h1>
+            <div class="col-lg-3 col-md-3">
+                <div class="panel panel-info">
+{#                    style="color: #ffffff;background-color: #09c5e2;border-color: #09c5e2"#}
+                    <div class="panel-heading">
+                        <h3><a class="fa fa-twitter fa-lg pull-left" style="/*color: #FFF;*/"></a>Tweets</h3>
+                        <h3 style="padding-left: 15%;"><div id="tweets_count" style="/*color: #ffffff;font-size: large*/">20</div></h3>
+                    </div>
+{#                    <div class="panel-body-small" style="background:#2b669a; ">#}
+{#                        #3FBBEE#}
+{#                        <div class="row">#}
+{#                            <div class="col-lg-3 col-md-3">#}
+{#                                <div id="tweets_count" style="color: #ffffff;font-size: large">120</div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+   </div>
+{% endblock %}
