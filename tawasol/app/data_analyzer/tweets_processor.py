@@ -48,8 +48,8 @@ class TweetProcessor(Process):
 						for collection in collections:
 							for tweet_collection in self.tweets_collection_list:
 								if collection == tweet_collection.name:
-									self.redis_db.rpush(self.results_channels[user_name], json.dumps(processed_tweet))
-									self.redis_db.ltrim(self.results_channels[user_name], -100000, -1)
+									self.redis_db.rpush(self.results_channel[user_name], json.dumps(processed_tweet))
+									self.redis_db.ltrim(self.results_channel[user_name], -100000, -1)
 									##
 									tweet_collection.insert_one(processed_tweet)
 									logging.info('tweet is inserted into: %s . tweet: %s' % (collection, processed_tweet['text'].encode('utf-8')))
