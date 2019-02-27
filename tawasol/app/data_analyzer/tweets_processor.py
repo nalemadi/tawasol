@@ -41,21 +41,20 @@ class TweetProcessor(Process):
 					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
 					processed_tweet = processed_info[0]
 					collections = processed_info[1]
-					user_name = processed_info[2]
-					print 'tweets_collection_list', self.tweets_collection_list
-					print 'INFO: collection: ', collections, 'process tweet:', processed_tweet['text'].encode('utf-8')
 					if len(collections) > 0:
 						for collection in collections:
+							broken = collection.split('_')
+							user_name = broken[0].lower()
 							for tweet_collection in self.tweets_collection_list:
 								if collection == tweet_collection.name:
-									self.redis_db.rpush(self.results_channel[user_name], json.dumps(processed_tweet))
-									self.redis_db.ltrim(self.results_channel[user_name], -100000, -1)
+									#self.redis_db.rpush(self.results_channel[user_name], json.dumps(processed_tweet))
+									#self.redis_db.ltrim(self.results_channel[user_name], -1000, -1)
 									##
 									tweet_collection.insert_one(processed_tweet)
-									logging.info('tweet is inserted into: %s . tweet: %s' % (collection, processed_tweet['text'].encode('utf-8')))
+									logging.info('tweet is inserted into: %s - %s . tweet: %s' % (collection, user_name, processed_tweet['text']))
 					else:
 						self.undefined_tweets_collection.insert_one(processed_tweet)
-						logging.info('tweet is inserted into Undefined collection: %s' % processed_tweet['text'].encode('utf-8'))
+						logging.info('tweet is inserted into Undefined collection: %s' % processed_tweet['text'])
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass

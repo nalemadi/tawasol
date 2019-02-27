@@ -86,6 +86,7 @@ def new_user():
 	else:
 		return render_template('new_user.html')
 
+
 @app.route('/get_tweets/<user_id>', methods=['GET','POST'])
 def get_tweets(user_id):
 	if user_id:
@@ -94,8 +95,8 @@ def get_tweets(user_id):
 		#read from redis channel
 		tweets = REDIS_DB.lrange(results_channels[user_name], 0, -1)#[0]
 		data = {}
-		data['tweets'] = tweets
-		data['tweets_count'] = len(tweets)
+		data["tweets_count"] = len(tweets)
+		data = json.dumps(data)
 		json_data = json.loads(data)
 		return jsonify(json_data)
 	else:

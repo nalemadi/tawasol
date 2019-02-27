@@ -29,8 +29,6 @@ class TweetsAnalyzer():
 		else:
 			tweet_text_broken = simple_clean_text(tweet_text)
 
-		#print tweet_text_broken
-		user_name = ''
 		tweet_user = tweet['user']['screen_name']
 		collections = []
 		for key, value in users_dict.iteritems():
@@ -50,4 +48,4 @@ class TweetsAnalyzer():
 					logging.info('account found for: %s' % user_name)
 					collections.append(user_name + '_tweets')
 
-		return tweet, collections, user_name
+		return tweet, collections

@@ -4,7 +4,7 @@ import logging
 
 
 def simple_clean_text(text):
-	logging.info('=== simple_clean_text ===')
+	#logging.info('=== simple_clean_text ===')
 	# 1. remove urls
 	text = re.sub(r"http\S+", "", text)
 	# 2. remove puctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
@@ -16,7 +16,7 @@ def simple_clean_text(text):
 
 
 def simple_clean_text_ar(text):
-	logging.info('=== simple_clean_text_ar ===')
+	#logging.info('=== simple_clean_text_ar ===')
 	# 1. remove urls
 	text = re.sub(r"http\S+", "", text)
 	# 2. remove puctuations: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
