@@ -58,13 +58,13 @@ class TextAnalyzer():
 		:return: a score between 0 and 9.
 		"""
 		if lang == 'ar':
-			valence,fvec = emotion(text, labMT_ar, shift=True, happsList=labMTvector_ar)
-			stoppedVec = stopper(fvec,labMTvector_ar,labMTwordList_ar,stopVal=1.0)
+			valence, fvec = emotion(text, labMT_ar, shift=True, happsList=labMTvector_ar)
+			stoppedVec = stopper(fvec, labMTvector_ar, labMTwordList_ar, stopVal=1.0)
 			valence = emotionV(stoppedVec,labMTvector_ar)
 		elif lang == 'en':
-			valence,fvec = emotion(text, labMT_eng, shift=True, happsList=labMTvector_eng)
-			stoppedVec = stopper(fvec,labMTvector_eng,labMTwordList_eng,stopVal=1.0)
-			valence = emotionV(stoppedVec,labMTvector_eng)
+			valence, fvec = emotion(text, labMT_eng, shift=True, happsList=labMTvector_eng)
+			stoppedVec = stopper(fvec, labMTvector_eng, labMTwordList_eng, stopVal=1.0)
+			valence = emotionV(stoppedVec, labMTvector_eng)
 
 			if valence == -1:
 				return 0
@@ -80,11 +80,11 @@ class TextAnalyzer():
 		:param lang:
 		:return:
 		"""
-		if lang== "en":
+		if lang == 'en':
 			text = text.encode('utf8')
 			#get location of the server
-			server_location =  os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'utils'))
-			p = subprocess.Popen(shlex.split("java -jar {}/SentiStrength.jar stdin sentidata {}/SentStrength_Data/ trinary".format(server_location,server_location)), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			server_location = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'utils'))
+			p = subprocess.Popen(shlex.split("java -jar {}/SentiStrength.jar stdin sentidata {}/SentStrength_Data/ trinary".format(server_location, server_location)), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			stdout_text, stderr_text = p.communicate(text.replace(" ", "+"))
 
 			try:

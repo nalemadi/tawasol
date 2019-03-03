@@ -35,7 +35,8 @@ class Tweet():
 
 		# sentiment
 		if 'sentiment' not in tweet.keys():
-			tweet['sentiment'] = self.get_sentiment_sentistrength(tweet_text, tweet['lang'])
+			tweet['sentiment'] = text_analyzer.get_sentiment_sentistrength(tweet_text, tweet['lang'])
+			self.sentiment_score = tweet.get('sentiment', None)
 		else:
 			self.sentiment_score = tweet.get('sentiment', None)
 
@@ -47,7 +48,7 @@ class Tweet():
 
 		# tweet emotion
 		if 'emotion' not in tweet.keys():
-			tweet['emotion'] = self.get_emotion(tweet_text, tweet['lang'])
+			tweet['emotion'] = text_analyzer.get_emotion(tweet_text, tweet['lang'])
 			self.emotion_score = tweet['emotion']
 		else:
 			self.emotion_score = tweet['emotion']
