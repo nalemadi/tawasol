@@ -12,7 +12,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 
-	def __init__(self, user_name):
+	def __init__(self):
 		self.collection = None
 		self.categories = set()
 		self.time_slots = []
@@ -28,7 +28,6 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		#self.community_graph = {'nodes': [], 'links': []}
 		self.users_graph_links = set()
 		self.start_time = datetime.utcnow()
-		self.user_name = user_name
 
 	def process_tweet(self, tweet, users_dict):
 		"""
