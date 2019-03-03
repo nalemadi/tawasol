@@ -29,8 +29,8 @@ class Tweet():
         # user profile 
         self.user_profile = {'frequency': 1, 'uid': self.tweet_id, 'user_bio': tweet['user']['description'], 'user_img': tweet['user']['profile_image_url'], 'user_name': self.screen_name}
 
-        # tweet emotion 
-        self.emotion_score = tweet['emotion']
+        # # tweet emotion
+        # self.emotion_score = tweet['emotion']
 
         # Get images
         if tweet.get('entities',{}).get('media',None):

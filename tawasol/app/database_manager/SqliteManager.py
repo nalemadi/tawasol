@@ -12,6 +12,7 @@ class SqliteManager:
 		self.database_file = 'tawasol.sqlite'
 		self.connection = self.create_connection()
 		self.users = self.select_all_users()
+		self.tawasol_users = self.get_keywords_accounts_for_users()
 
 	def create_connection(self):
 		""" create a database connection to the SQLite database
@@ -38,7 +39,7 @@ class SqliteManager:
 		users = [row[1] for row in rows]
 		return users
 
-	def get_keywords_accounts_for_user(self):
+	def get_keywords_accounts_for_users(self):
 		"""
 		:param users_arr:
 		:return:
@@ -87,7 +88,7 @@ if __name__ == '__main__':
 		#users = db.select_all_users()
 		##
 		#print '2. Query hashtags and accounts for user:'
-		#db.get_keywords_accounts_for_user()
+		#db.get_keywords_accounts_for_users()
 
 		userIds = db.get_userID_from_account('[REDACTED_VALUE]')
 		print userIds

@@ -87,8 +87,8 @@ def new_user():
 		return render_template('new_user.html')
 
 
-@app.route('/get_tweets/<user_id>', methods=['GET','POST'])
-def get_tweets(user_id):
+@app.route('/get_info/<user_id>', methods=['GET','POST'])
+def get_info(user_id):
 	if user_id:
 		broken = user_id.split('@')
 		user_name = broken[0].lower()
