@@ -20,13 +20,24 @@ class Tweet():
 		self.lang = tweet['lang']
 
 		# tweet text
-		self.tweet_text = tweet['text']
+		#self.tweet_text = tweet['text']
+		if 'retweeted_status' in tweet.keys():
+			if 'extended_tweet' in tweet['retweeted_status'].keys():
+				tweet_text = tweet['retweeted_status']['extended_tweet']['full_text']
+			else:
+				tweet_text = tweet['text']
+		else:
+			tweet_text = tweet['text']
+		self.tweet_text = tweet_text
 
 		# screen name
 		self.screen_name = tweet['user']['screen_name']
 
 		# sentiment
-		self.sentiment_score = tweet.get('sentiment', None)
+		if 'sentiment' not in tweet.keys():
+			tweet['sentiment'] = self.get_sentiment_sentistrength(tweet_text, tweet['lang'])
+		else:
+			self.sentiment_score = tweet.get('sentiment', None)
 
 		# hashtags
 		self.hashtags = [x.get(u'text') for x in tweet.get('entities').get('hashtags')]
@@ -35,10 +46,11 @@ class Tweet():
 		self.user_profile = {'frequency': 1, 'uid': self.tweet_id, 'user_bio': tweet['user']['description'], 'user_img': tweet['user']['profile_image_url'], 'user_name': self.screen_name}
 
 		# tweet emotion
-		if 'emotion' in tweet.keys():
+		if 'emotion' not in tweet.keys():
+			tweet['emotion'] = self.get_emotion(tweet_text, tweet['lang'])
 			self.emotion_score = tweet['emotion']
 		else:
-			self.emotion_score = None
+			self.emotion_score = tweet['emotion']
 
 		# list of mentioned users
 		self.lst_mentioned_usrs = text_analyzer.get_mentioned_users(tweet['text'])

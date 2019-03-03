@@ -6,6 +6,7 @@ from tweet import Tweet
 from datetime import datetime
 from text_analyzer import TextAnalyzer
 from time_analyzer import TimeAnalyzer
+from pytz import timezone
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -53,6 +54,9 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		tweet['emotion'] = self.get_emotion(tweet_text, tweet['lang'])
 		tweet['sentiment'] = self.get_sentiment_sentistrength(tweet_text, tweet['lang'])
 
+		# Convert datetime
+		tweet['created_at'] = self.to_datetime(tweet['created_at']).replace(tzinfo=timezone('GMT'))
+
 		tweet_user = tweet['user']['screen_name']
 		users_list = []
 		for key, value in users_dict.iteritems():
@@ -75,7 +79,11 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		return tweet, users_list
 
 	def generate_tweet_with_timeIndex(self, tweet):
-		tweet_date = self.to_datetime(tweet['created_at'])
+		is_string = isinstance(tweet['created_at'], basestring)
+		if is_string:
+			tweet_date = self.to_datetime(tweet['created_at'])
+		else:
+			tweet_date = tweet['created_at']
 		time_index = self.get_time_index(tweet_date, self.time_slots)
 		result_tweet = Tweet(tweet, time_index)
 		return result_tweet
@@ -193,13 +201,11 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 
 	def get_analyzed_tweets(self, tweets):
 		"""
-		Redefining this method to deal with multiple cities
-		Author: Sofiane
 		:param tweets:
 		:return:
 		"""
 		self.time_slots = self.get_all_timeslots()
-		# Sofiane: This is iterating over PyMongoDB cursor.
+		# This is iterating over PyMongoDB cursor.
 		n = 0
 		for tweet in tweets:
 			# Assign a tweet to a time slot
