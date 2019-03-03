@@ -2,7 +2,7 @@ from threading import Thread
 import time
 import logging
 import json
-import datetime
+from datetime import datetime
 from ..data_analyzer.tweets_analyzer import TweetsAnalyzer
 from ..data_querier.time_querier import TimeQuerier
 from ..config.dashboard_config import TIME_GRANULARITY, TIME_COVERED
@@ -19,9 +19,9 @@ class TawasolAnalyzer(Thread):
 		self.interval = interval
 
 	def tawasol_analyzer(self, user_name):
-		print 'tawasol'
-		tweets_analyzer = TweetsAnalyzer(user_name)
+		tweets_analyzer = TweetsAnalyzer()
 
+		# user's tweets from mongodb
 		user_collection = self.tweets_collection[user_name]
 
 		time_querier = TimeQuerier(user_collection, user_name, TIME_COVERED)

@@ -72,7 +72,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		return tweet, users_list
 
 	def generate_tweet_with_timeIndex(self, tweet):
-		time_index = self.get_time_index_v2(tweet['created_at'], self.time_slots)
+		time_index = self.get_time_index(tweet['created_at'], self.time_slots)
 		result_tweet = Tweet(tweet, time_index)
 		return result_tweet
 
@@ -82,7 +82,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		:return: dictionary for all tweets statistics
 		"""
 		logging.info('Generating Tweets Report')
-		result = {}
+		result = dict()
 
 		# Categories
 		result['categories'] = sorted(self.categories)

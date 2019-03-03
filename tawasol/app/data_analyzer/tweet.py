@@ -1,3 +1,9 @@
+from time_analyzer import TimeAnalyzer
+from text_analyzer import TextAnalyzer
+
+text_analyzer = TextAnalyzer()
+time_analyzer = TimeAnalyzer()
+
 
 class Tweet():
     def __init__(self, tweet, time_index):
@@ -25,12 +31,17 @@ class Tweet():
         # hashtags 
         self.hashtags = [x.get(u'text') for x in tweet.get('entities').get('hashtags')]
 
-
         # user profile 
         self.user_profile = {'frequency': 1, 'uid': self.tweet_id, 'user_bio': tweet['user']['description'], 'user_img': tweet['user']['profile_image_url'], 'user_name': self.screen_name}
 
         # # tweet emotion
         # self.emotion_score = tweet['emotion']
+
+        # list of mentioned users
+        self.lst_mentioned_usrs = text_analyzer.get_mentioned_users(tweet['text'])
+
+        # tweet emotion
+        self.emotion_score = tweet['emotion']
 
         # Get images
         if tweet.get('entities',{}).get('media',None):
