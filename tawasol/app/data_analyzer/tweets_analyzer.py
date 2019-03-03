@@ -161,8 +161,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		self.users_distribution[tweet.time_index].add(tweet.screen_name)
 
 		# Tweet distribution
-		tweet_date = self.to_datetime(tweet.created_at)
-		self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S')]))
+		#tweet_date = self.to_datetime(tweet.created_at)
+		self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet.created_at.strftime('%Y-%m-%dT%H:%M:%S')]))
 
 		# Used hashtags
 		for hashtag in tweet.hashtags:
