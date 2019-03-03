@@ -50,6 +50,9 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		else:
 			tweet_text_broken = simple_clean_text(tweet_text)
 
+		tweet['emotion'] = self.get_emotion(tweet_text, tweet['lang'])
+		tweet['sentiment'] = self.get_sentiment_sentistrength(tweet_text, tweet['lang'])
+
 		tweet_user = tweet['user']['screen_name']
 		users_list = []
 		for key, value in users_dict.iteritems():
@@ -72,7 +75,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		return tweet, users_list
 
 	def generate_tweet_with_timeIndex(self, tweet):
-		time_index = self.get_time_index(tweet['created_at'], self.time_slots)
+		tweet_date = self.to_datetime(tweet['created_at'])
+		time_index = self.get_time_index(tweet_date, self.time_slots)
 		result_tweet = Tweet(tweet, time_index)
 		return result_tweet
 
@@ -149,7 +153,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		self.users_distribution[tweet.time_index].add(tweet.screen_name)
 
 		# Tweet distribution
-		self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet.created_at.strftime('%Y-%m-%dT%H:%M:%S')]))
+		tweet_date = self.to_datetime(tweet.created_at)
+		self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S')]))
 
 		# Used hashtags
 		for hashtag in tweet.hashtags:
@@ -164,8 +169,27 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		else:
 			self.users_graph_nodes[tweet.screen_name]['frequency'] += 1
 
+
 		for user in self.get_mentioned_users(tweet.tweet_text):
 			self.users_graph_links.add((user, tweet.screen_name))
+
+	def calculate_sentiment_dist(self, date_index, sentiment_score):
+		"""
+		calculate sentiment distribution in date index
+		:param date_index: date
+		:param sentiment_score: int
+		:return:
+		"""
+		# tweet sentiment
+		if self.tweets_sentiment.get(date_index, None) is None:
+			self.tweets_sentiment[date_index] = {'negative': 0, 'positive': 0, 'neutral': 0 }
+
+		if sentiment_score < 0:
+			self.tweets_sentiment[date_index]['negative'] += 1
+		elif sentiment_score > 0:
+			self.tweets_sentiment[date_index]['positive'] += 1
+		else:
+			self.tweets_sentiment[date_index]['neutral'] += 1
 
 	def get_analyzed_tweets(self, tweets):
 		"""

@@ -66,22 +66,22 @@ class TimeAnalyzer:
 		time_slots = [start - timedelta(minutes=x) for x in range(0, max_frames+1, TIME_GRANULARITY)]
 		return sorted(time_slots)
 
-	def get_time_index(self, dt, time_slots):
-		for i in range(0, len(time_slots) - 1):
-			next_time_slot = time_slots[i + 1]
-			curr_time_slot = time_slots[i]
-			if curr_time_slot <= dt and dt < next_time_slot:
-				return curr_time_slot.strftime('%Y-%m-%dT%H:%M')
-		return None
+	# def get_time_index(self, dt, time_slots):
+	# 	for i in range(0, len(time_slots) - 1):
+	# 		next_time_slot = time_slots[i + 1]
+	# 		curr_time_slot = time_slots[i]
+	# 		if curr_time_slot <= dt and dt < next_time_slot:
+	# 			return curr_time_slot.strftime('%Y-%m-%dT%H:%M')
+	# 	return None
 
-	def get_time_index_v2(self, dt, time_slots):
+	def get_time_index(self, tweet_date, time_slots):
 		"""
 		Sofiane: trying to optimize this method
-		:param dt:
+		:param tweet_date:
 		:param time_slots:
 		:return:
 		"""
 		for curr_time_slot, next_time_slot in zip(time_slots, time_slots[1:]):
-			if curr_time_slot <= dt < next_time_slot:
+			if curr_time_slot <= tweet_date < next_time_slot:
 				return curr_time_slot.strftime('%Y-%m-%dT%H:%M')
 		return None
