@@ -3,7 +3,7 @@ import logging
 from ..config.dashboard_config import NBR_HAHSTAGS, NBR_IMAGES
 from collections import defaultdict, Counter
 from tweet import Tweet
-import datetime
+from datetime import datetime
 from text_analyzer import TextAnalyzer
 from time_analyzer import TimeAnalyzer
 

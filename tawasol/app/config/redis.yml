@@ -1,4 +1,4 @@
-host: '10.4.2.37'
+host: 'localhost'
 port: [REDACTED_VALUE]
 hostname: tawasol_prod
 channels:
