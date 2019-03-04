@@ -43,11 +43,11 @@ class TawasolAnalyzer(Thread):
 				data = self.tawasol_analyzer(user_name)
 
 				# remove the previous one
-				#self.redis_db.lpop(self.results_channels[user_name])
+				self.redis_db.lpop(self.results_channels[user_name])
 
 				# insert to redis Queue
 				self.redis_db.rpush(self.results_channels[user_name], json.dumps(data))
-				#self.redis_db.ltrim(self.results_channels[user_name], -100000, -1)
+				self.redis_db.ltrim(self.results_channels[user_name], -100000, -1)
 				logging.info('inserted tawasol_data for %s into redis channel: (%s)' % (user_name, self.results_channels[user_name]))
 
 			logging.info("Sleeping for: %s" % self.interval)

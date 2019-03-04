@@ -93,9 +93,8 @@ def get_info(user_id):
 		broken = user_id.split('@')
 		user_name = broken[0].lower()
 		#read from redis channel
+		print 'current redis channel name:', results_channels[user_name]
 		data = REDIS_DB.lrange(results_channels[user_name], 0, -1)[0]
-		# data = {}
-		# data = json.dumps(data)
 		json_data = json.loads(data)
 		return jsonify(json_data)
 	else:
