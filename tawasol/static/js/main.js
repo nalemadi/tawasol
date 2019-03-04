@@ -2,6 +2,64 @@ console.log("Tawasol main JS file");
 
 $(document).ready(function() {
 
+    function generate_users_distribution(values) {
+        // User distribution for users
+        $('#users_distribution').highcharts({
+            chart: {
+                zoomType: 'x',
+                height: 250
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'Click to zoom in'
+            },
+            xAxis: {
+                categories: values.categories
+            },
+            yAxis: {
+                title: {
+                    text: 'Number of users'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+            series: [{
+                type: 'area',
+                name: 'Number of users',
+                data: values.users
+            }]
+        });
+    };
+
     function update_tweets_count(tweets_count) {
         $('#tweets_count').text(tweets_count);
     }
@@ -19,6 +77,7 @@ $(document).ready(function() {
         update_tweets_count(values.nbr_tweets);
         update_users_count(values.nbr_users);
         update_date();
+        generate_users_distribution(values.twitter);
     }
 
     function generate_charts(user_email) {

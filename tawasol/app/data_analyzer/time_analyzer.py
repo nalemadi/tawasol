@@ -51,7 +51,7 @@ class TimeAnalyzer:
 		for i in range(0,len(time_slots)-1):
 			next_time_slot = time_slots[i+1]
 			curr_time_slot = time_slots[i]
-			if curr_time_slot<=dt and dt<next_time_slot:
+			if curr_time_slot <= dt and dt < next_time_slot:
 				return curr_time_slot.strftime('%Y-%m-%dT%H:%M')
 				break
 		return None
@@ -76,7 +76,6 @@ class TimeAnalyzer:
 
 	def get_time_index(self, tweet_date, time_slots):
 		"""
-		Sofiane: trying to optimize this method
 		:param tweet_date:
 		:param time_slots:
 		:return:
