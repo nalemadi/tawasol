@@ -108,7 +108,7 @@ def home():
 	user_email = session['user_id']
 	user = Users.query.get(user_email)
 	current_username = user.username.title()
-	return render_template('home.html', authenticated=True, current_username=current_username)
+	return render_template('home.html', authenticated=True, current_username=current_username, user_email=user_email)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
