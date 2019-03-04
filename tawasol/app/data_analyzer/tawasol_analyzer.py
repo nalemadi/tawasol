@@ -26,7 +26,8 @@ class TawasolAnalyzer(Thread):
 
 		time_querier = TimeQuerier(user_collection, user_name, TIME_COVERED)
 		logging.info('running tweets query for %s' % user_name)
-		tweets = time_querier.get_tweets_in_period()
+		#tweets = time_querier.get_tweets_in_period()
+		tweets = time_querier.get_all_tweets()
 
 		logging.info('Analyzing extracted Tweets for %s' % user_name)
 		tw_analyzed_data, n_tweets = tweets_analyzer.get_analyzed_tweets(tweets)
