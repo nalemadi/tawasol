@@ -100,31 +100,31 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		result['categories'] = sorted(self.categories)
 
 		# Tweets Sentiment
-		result['positive'] = [self.tweets_sentiment[x].get('positive', 0) for x in self.categories]
-		result['negative'] = [self.tweets_sentiment[x].get('negative', 0) for x in self.categories]
-		result['neutral'] = [self.tweets_sentiment[x].get('neutral', 0) for x in self.categories]
+		# result['positive'] = [self.tweets_sentiment[x].get('positive', 0) for x in self.categories]
+		# result['negative'] = [self.tweets_sentiment[x].get('negative', 0) for x in self.categories]
+		# result['neutral'] = [self.tweets_sentiment[x].get('neutral', 0) for x in self.categories]
 
 		# Nbr of tweets/users
 		result['nbr_users'] = sum([len(list(self.users_distribution[x])) for x in self.categories])
 		result['nbr_tweets'] = sum([len(list(self.tweets_distribution[x])) for x in self.categories])
 
 		# Happiness Chart
-		result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang= 'en') for x in self.categories]
+		# result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang= 'en') for x in self.categories]
 
 		# Users Chart
-		result['users'] = [len(list(self.users_distribution[x])) for x in self.categories]
+		# result['users'] = [len(list(self.users_distribution[x])) for x in self.categories]
 
 		# Hashtags Chart
-		users_hashtags = [{'text': hashtag, 'weight': freq} for hashtag, freq in self.hashtags.iteritems()]
+		# users_hashtags = [{'text': hashtag, 'weight': freq} for hashtag, freq in self.hashtags.iteritems()]
 
-		result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
+		# result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
 
 		# # Language
 		# lst_lang = [[ISO639_2.get(k,k),v] for k,v in self.language_distribution.items()]
 		# result['language'] = self.get_language_dist(lst_lang)
 
 		# Images
-		result['images'] = self.images[(-1)*NBR_IMAGES:]
+		# result['images'] = self.images[(-1)*NBR_IMAGES:]
 
 		# # Gender Distribution
 		# result['gender'] = [['Female', self.gender_distribution['female']],['Male', self.gender_distribution['male']]]
@@ -132,15 +132,16 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		# # Community Graph
 		# result['community_graph'] = {'nodes': self.users_graph_nodes, 'links': []}
 
-		try:
-			if len(self.tweets_distribution.keys()) > 0:
-				result['tweets'] = [tweet for tweet in self.tweets_distribution[max(self.tweets_distribution.keys())]] # [(-1)*NBR_TWEETS:]
-			else:
-				result['tweets'] = []
+		# try:
+		# 	if len(self.tweets_distribution.keys()) > 0:
+		# 		result['tweets'] = [tweet for tweet in self.tweets_distribution[max(self.tweets_distribution.keys())]] # [(-1)*NBR_TWEETS:]
+		# 	else:
+		# 		result['tweets'] = []
+		#
+		# except Exception as e:
+		# 	result['tweets'] = []
+		# 	# print 'error get_tweets_summary_report', e
 
-		except Exception as e:
-			result['tweets'] = []
-			# print 'error get_tweets_summary_report', e
 		return result
 
 	def populate_tweets(self, tweet):
@@ -155,7 +156,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		self.language_distribution[tweet.lang] += 1
 
 		# Sentiment
-		self.calculate_sentiment_dist(tweet.time_index, tweet.sentiment_score)
+		# self.calculate_sentiment_dist(tweet.time_index, tweet.sentiment_score)
 
 		# User distribution
 		self.users_distribution[tweet.time_index].add(tweet.screen_name)
@@ -169,21 +170,20 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S')]))
 
 		# Used hashtags
-		for hashtag in tweet.hashtags:
-			self.hashtags[hashtag] += 1
+		# for hashtag in tweet.hashtags:
+		# 	self.hashtags[hashtag] += 1
 
 		# add images
-		self.images += tweet.tweet_images
+		# self.images += tweet.tweet_images
 
 		# graph nodes
-		if self.users_graph_nodes.get(tweet.tweet_id, None) == None:
-			self.users_graph_nodes[tweet.screen_name] = tweet.user_profile
-		else:
-			self.users_graph_nodes[tweet.screen_name]['frequency'] += 1
-
-
-		for user in self.get_mentioned_users(tweet.tweet_text):
-			self.users_graph_links.add((user, tweet.screen_name))
+		# if self.users_graph_nodes.get(tweet.tweet_id, None) is None:
+		# 	self.users_graph_nodes[tweet.screen_name] = tweet.user_profile
+		# else:
+		# 	self.users_graph_nodes[tweet.screen_name]['frequency'] += 1
+		#
+		# for user in self.get_mentioned_users(tweet.tweet_text):
+		# 	self.users_graph_links.add((user, tweet.screen_name))
 
 	def calculate_sentiment_dist(self, date_index, sentiment_score):
 		"""
