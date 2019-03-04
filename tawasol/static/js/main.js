@@ -34,8 +34,9 @@ $(document).ready(function() {
     ////////////////////////////
     //  Start Here          ///
     ///////////////////////////
-    var user_email = $('#my-data').data();
-    if (user_email != null) {
+    var user_data = $('#my-data').data();
+    if (user_data != null) {
+        var user_email = user_data.name;
         console.log(user_email);
         generate_charts(user_email);
     }
