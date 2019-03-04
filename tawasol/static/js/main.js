@@ -77,7 +77,7 @@ $(document).ready(function() {
         update_tweets_count(values.nbr_tweets);
         update_users_count(values.nbr_users);
         update_date();
-        generate_users_distribution(values.twitter);
+        generate_users_distribution(values);
     }
 
     function generate_charts(user_email) {
