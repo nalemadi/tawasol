@@ -7,7 +7,7 @@ $(document).ready(function() {
         $('#hashtag').jQCloud(hashtags, {
             autoResize: true
         });
-    };
+    }
 
     function generate_users_distribution(values) {
         // User distribution for users
