@@ -8,6 +8,8 @@
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <meta name="description" content="">
         <meta name="author" content="">
+        <!-- JSQuery -->
+        <script src="./static/libs/jquery-2.1.1/jquery.min.js"></script>
         <!-- Bootstrap core CSS -->
         <link href="{{ url_for('static', filename='libs/bootstrap-3.3.7/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 {#        <!-- Bootstrap Style -->#}
@@ -25,8 +27,6 @@
         integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
         crossorigin=""></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-        <!-- Leaflet JS and CSS -->
-{#        <link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />#}
         <!-- moment -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
         <!-- jqCloud  -->
@@ -49,11 +49,9 @@
         ================================================== -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-{#        <script src="{{ url_for('static', filename='libs/bootstrap-3.3.7/dist/js/bootstrap.min.js') }}"></script>#}
         <script src="./static/libs/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-{#        <script src="{{url_for('static', filename='js/main.js')}}"></script>#}
+{#        <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>#}
         <script src="./static/js/main.js"></script>
         {% block scripts %}{% endblock %}
     </body>
