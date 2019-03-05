@@ -2,6 +2,13 @@ console.log("Tawasol main JS file");
 
 $(document).ready(function() {
 
+    function generate_hashtags(values) {
+        var hashtags = values.hashtags;
+        $('#hashtag').jQCloud(hashtags, {
+            autoResize: true
+        });
+    };
+
     function generate_users_distribution(values) {
         // User distribution for users
         $('#users_distribution').highcharts({
@@ -78,6 +85,7 @@ $(document).ready(function() {
         update_users_count(values.nbr_users);
         update_date();
         generate_users_distribution(values);
+        generate_hashtags(values);
     }
 
     function generate_charts(user_email) {

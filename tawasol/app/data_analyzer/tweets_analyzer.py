@@ -22,7 +22,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		# self.tweets_sentiment = defaultdict(lambda: defaultdict(int))
 		# self.tweets_happiness = {}
 		# self.language_distribution = defaultdict(int)
-		# self.hashtags = defaultdict(int)
+		self.hashtags = defaultdict(int)
 		# self.images = []
 		#self.users_graph_nodes = defaultdict()
 		#self.gender_distribution = {'female': 0, 'male': 0}
@@ -114,9 +114,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		result['users'] = [len(list(self.users_distribution[x])) for x in self.categories]
 
 		# Hashtags Chart
-		# users_hashtags = [{'text': hashtag, 'weight': freq} for hashtag, freq in self.hashtags.iteritems()]
-
-		# result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
+		users_hashtags = [{'text': hashtag, 'weight': freq} for hashtag, freq in self.hashtags.iteritems()]
+		result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
 
 		# # Language
 		# lst_lang = [[ISO639_2.get(k,k),v] for k,v in self.language_distribution.items()]
@@ -169,8 +168,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S')]))
 
 		# Used hashtags
-		# for hashtag in tweet.hashtags:
-		# 	self.hashtags[hashtag] += 1
+		for hashtag in tweet.hashtags:
+			self.hashtags[hashtag] += 1
 
 		# add images
 		# self.images += tweet.tweet_images
