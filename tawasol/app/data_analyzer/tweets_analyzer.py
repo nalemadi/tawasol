@@ -19,8 +19,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		self.time_slots = []
 		self.users_distribution = defaultdict(set)
 		self.tweets_distribution = defaultdict(set)
-		# self.tweets_sentiment = defaultdict(lambda: defaultdict(int))
-		# self.tweets_happiness = {}
+		self.tweets_sentiment = defaultdict(lambda: defaultdict(int))
+		self.tweets_happiness = {}
 		# self.language_distribution = defaultdict(int)
 		self.hashtags = defaultdict(int)
 		# self.images = []
@@ -99,16 +99,16 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		result['categories'] = sorted(self.categories)
 
 		# Tweets Sentiment
-		# result['positive'] = [self.tweets_sentiment[x].get('positive', 0) for x in self.categories]
-		# result['negative'] = [self.tweets_sentiment[x].get('negative', 0) for x in self.categories]
-		# result['neutral'] = [self.tweets_sentiment[x].get('neutral', 0) for x in self.categories]
+		result['positive'] = [self.tweets_sentiment[x].get('positive', 0) for x in self.categories]
+		result['negative'] = [self.tweets_sentiment[x].get('negative', 0) for x in self.categories]
+		result['neutral'] = [self.tweets_sentiment[x].get('neutral', 0) for x in self.categories]
 
 		# Nbr of tweets/users
 		result['nbr_users'] = sum([len(list(self.users_distribution[x])) for x in self.categories])
 		result['nbr_tweets'] = sum([len(list(self.tweets_distribution[x])) for x in self.categories])
 
 		# Happiness Chart
-		# result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang= 'en') for x in self.categories]
+		result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang='en') for x in self.categories]
 
 		# Users Chart
 		result['users'] = [len(list(self.users_distribution[x])) for x in self.categories]
@@ -154,7 +154,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		#self.language_distribution[tweet.lang] += 1
 
 		# Sentiment
-		# self.calculate_sentiment_dist(tweet.time_index, tweet.sentiment_score)
+		self.calculate_sentiment_dist(tweet.time_index, tweet.sentiment_score)
 
 		# User distribution
 		self.users_distribution[tweet.time_index].add(tweet.screen_name)
@@ -183,23 +183,23 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		# for user in self.get_mentioned_users(tweet.tweet_text):
 		# 	self.users_graph_links.add((user, tweet.screen_name))
 
-	# def calculate_sentiment_dist(self, date_index, sentiment_score):
-	# 	"""
-	# 	calculate sentiment distribution in date index
-	# 	:param date_index: date
-	# 	:param sentiment_score: int
-	# 	:return:
-	# 	"""
-	# 	# tweet sentiment
-	# 	if self.tweets_sentiment.get(date_index, None) is None:
-	# 		self.tweets_sentiment[date_index] = {'negative': 0, 'positive': 0, 'neutral': 0 }
-	#
-	# 	if sentiment_score < 0:
-	# 		self.tweets_sentiment[date_index]['negative'] += 1
-	# 	elif sentiment_score > 0:
-	# 		self.tweets_sentiment[date_index]['positive'] += 1
-	# 	else:
-	# 		self.tweets_sentiment[date_index]['neutral'] += 1
+	def calculate_sentiment_dist(self, date_index, sentiment_score):
+		"""
+		calculate sentiment distribution in date index
+		:param date_index: date
+		:param sentiment_score: int
+		:return:
+		"""
+		# tweet sentiment
+		if self.tweets_sentiment.get(date_index, None) is None:
+			self.tweets_sentiment[date_index] = {'negative': 0, 'positive': 0, 'neutral': 0 }
+
+		if sentiment_score < 0:
+			self.tweets_sentiment[date_index]['negative'] += 1
+		elif sentiment_score > 0:
+			self.tweets_sentiment[date_index]['positive'] += 1
+		else:
+			self.tweets_sentiment[date_index]['neutral'] += 1
 
 	def get_analyzed_tweets(self, tweets):
 		"""

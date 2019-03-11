@@ -9,6 +9,71 @@ $(document).ready(function() {
         });
     }
 
+    function generate_sentiment_chart(values) {
+        // Sentiment Chart for Tweets
+        $('#chart_sentiment').highcharts({
+            colors: ['#27ae60', '#e74c3c', '#7f8c8d'],
+            chart: {
+                type: 'area',
+                height: 350
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: values.categories,
+                tickmarkPlacement: 'on',
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Total Number of tweets'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -30,
+                verticalAlign: 'top',
+                y: 25,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                headerFormat: '<b>{point.x}</b><br/>',
+                pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            },
+            plotOptions: {
+                area: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                    }
+                }
+            },
+            series: [{
+                name: 'Positive',
+                data: values.positive
+            }, {
+                name: 'Negative',
+                data: values.negative
+            }, {
+                name: 'Neutral',
+                data: values.neutral
+            }]
+        });
+    }
+
     function generate_users_distribution(values) {
         // User distribution for users
         $('#users_distribution').highcharts({
@@ -20,7 +85,7 @@ $(document).ready(function() {
                 text: ''
             },
             subtitle: {
-                text: 'Click to zoom in'
+                text: ''
             },
             xAxis: {
                 categories: values.categories
@@ -65,7 +130,65 @@ $(document).ready(function() {
                 data: values.users
             }]
         });
-    };
+    }
+
+    function generate_happiness_chart(values) {
+        // Happiness distribution for tweets
+        $('#happiness_distribution').highcharts({
+            chart: {
+                zoomType: 'x',
+                height: 250
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: values.categories
+            },
+            yAxis: {
+                title: {
+                    text: 'happiness score'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+            series: [{
+                type: 'area',
+                name: 'happiness score',
+                data: values.happiness
+            }]
+        });
+    }
 
     function update_tweets_count(tweets_count) {
         $('#tweets_count').text(tweets_count);
@@ -86,6 +209,8 @@ $(document).ready(function() {
         update_date();
         generate_users_distribution(values);
         generate_hashtags(values);
+        generate_sentiment_chart(values);
+        generate_happiness_chart(values);
     }
 
     function generate_charts(user_email) {
