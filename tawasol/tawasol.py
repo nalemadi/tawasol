@@ -1,15 +1,39 @@
-from flask import Flask, render_template, Response, redirect, url_for, request, session, flash, jsonify
+from flask import Flask, render_template, Response, redirect, url_for, request, session, flash, jsonify, current_app
 from flask_login import LoginManager, login_required, login_user, logout_user
-from tawasol_api.database import Users, Keywords, Accounts, db
+from tawasol_api.database import Users, Keywords, Accounts, Tokens, db
 from tawasol_api import pcrypt
 from app import results_channels, REDIS_DB
 import json
+from flask_security.decorators import roles_required
+from flask_security import Security, SQLAlchemyUserDatastore
+from flask_mail import Mail, Message
+import uuid
+import datetime
+import time
+from sqlalchemy import and_
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tawasol.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = "secret_key"
+#app.config['SECRET_KEY'] = 'super-secret'
+
+# Security config
+#user_datastore = SQLAlchemyUserDatastore(db, Users, Role)
+#security = Security(app, user_datastore)
+app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_RESET_URL'] = '/reset'
+
+# Mail config
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USERNAME'] = '[REDACTED_EMAIL]'
+app.config['MAIL_PASSWORD'] = '[REDACTED_P]'
+#app.config['DEFAULT_MAIL_SENDER'] = '[REDACTED_EMAIL]'
+mail = Mail(app)
 
 db.init_app(app)
 with app.test_request_context():
@@ -30,10 +54,13 @@ warn_NO_ACC_CHANGE = 'There are no changes in Accounts'
 succ_KEY_CHANGED = 'Keywords are successfully updated'
 succ_ACC_CHANGED = 'Accounts are successfully updated'
 err_NEW_PASS_SIMILAR = 'The new password is similar to current password. Try again'
-succ_CHANGE_PASS = 'Password Changed Successfully'
+succ_CHANGE_PASS = 'Your password has been changed successfully'
 err_EMAIL_EXIST = 'This email is already registered'
 warn_SIMILAR_USERNAME = 'Similar username'
 succ_USERNAME_CHANGED = 'Username is successfully updated'
+succ_EMAIL_PASS = 'Email sent, please check your email inbox'
+succ_RESET_PASS = 'Your password has been reset successfully'
+err_TOKEN_NOT_EXIST = 'There is no matching token'
 
 # alert-messages-categories
 user_not_exist_cat = 'user_not_exist'
@@ -45,6 +72,11 @@ settings_changed_cat = 'settings_changed'
 password_changed_cat = 'password_changed'
 similar_user_cat = 'similar_user'
 profile_changed_cat = 'profile_changed'
+email_sent_cat = 'email_sent'
+token_not_exist_cat = 'token_not_found'
+
+# @security.reset_password_context_processor
+# def reset_password_context_processor():
 
 
 # callback to reload the user object
@@ -342,6 +374,39 @@ def update_username(email, username):
 	db.session.commit()
 
 
+def insert_into_tokens(code, email):
+	created_at = datetime.datetime.now()
+	expired_at = created_at + datetime.timedelta(minutes=10)
+	create_epoch = int(time.mktime(created_at.timetuple()) + created_at.microsecond / 1E6)
+	expire_epoch = int(time.mktime(expired_at.timetuple()) + expired_at.microsecond / 1E6)
+
+	token = Tokens(
+		token=code,
+		email=email,
+		created=create_epoch,
+		expired=expire_epoch)
+	db.session.add(token)
+	db.session.commit()
+
+
+def check_token(token, email):
+	is_exist = db.session.query(db.exists().where(and_(Tokens.token == token, Tokens.email == email))).scalar()
+	return is_exist
+
+
+def is_token_valid(token, email):
+	#result = db.session.query(db.exists().where(and_(Tokens.token == token, Tokens.email == email))).scalar() #.filter(Tokens.email == email, Tokens.token == token)
+	result = db.session.query(Tokens).filter(Tokens.email == email, Tokens.token == token)
+	existing_token = [token_.expired for token_ in result]
+	exp_time_epoch = existing_token[0]
+	e_date = datetime.datetime.fromtimestamp(int(exp_time_epoch))
+	now_date = datetime.datetime.now()
+	if e_date > now_date:
+		return True
+	else:
+		return False
+
+
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
@@ -396,28 +461,63 @@ def profile():
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
+	# check app password from gmail
 	print '=== forgot_password ==='
 	if request.method == 'POST':
 		email = request.form['email']
 		exist = is_user_exist(email)
-		print 'forgot password', exist
 		if exist:
-			new_password = request.form['new_password']
-			renew_password = request.form['renew_password']
-			try:
-				assert new_password == renew_password
-				# generate new encrypted password
-				update_password(email, new_password)
-				flash(succ_CHANGE_PASS, password_changed_cat)
-			except AssertionError as error:
-				print error
-				flash(err_PASS_NOT_MATCH, wrong_password_cat)
-			except Exception as exception:
-				print exception
-				flash(err_PASS_NOT_MATCH, wrong_password_cat)
+			code = str(uuid.uuid4())
+			insert_into_tokens(code, email)
+			# email user
+			#body_html = render_template('reset_password.html', user_email=email)
+			body_text = render_template('password_reset.txt', user_email=email, code=code)
+			msg = Message('TAWASOL - Reset Password Request', sender=app.config['MAIL_USERNAME'], recipients=[email])
+			msg.body = body_text
+			mail.send(msg)
+			flash(succ_EMAIL_PASS, email_sent_cat)
+			#mail(email, "Password reset request", body_html, 'test')
 		else:
 			flash(err_EMAIL_NOT_REGIS, user_not_exist_cat)
 	return render_template('forgot_password.html')
+
+
+@app.route('/reset_password/<email>/<token>', methods=['GET', 'POST'])
+def reset_password(email, token):
+	print '==== reset password ===='
+	print email, token
+	exist = is_user_exist(email)
+	if exist:
+		if request.method == 'POST':
+			print 'reset pass == post'
+			password = request.form['new_password']
+			re_password = request.form['renew_password']
+			try:
+				assert password == re_password
+				###
+				update_password(email, password)
+				flash(succ_RESET_PASS, password_changed_cat)
+			except AssertionError as error:
+				print 'assertion error', error
+				flash(err_PASS_NOT_MATCH, wrong_password_cat)
+			return render_template('reset_password.html')
+		else:
+			print 'user exists == GET'
+			is_token_exist = check_token(token, email)
+			if is_token_exist:
+				is_valid = is_token_valid(token, email)
+				if is_valid:
+					return render_template('reset_password.html')
+				else:
+					return render_template('expired_token.html')
+			else:
+				print 'token not exist'
+				flash(err_TOKEN_NOT_EXIST, token_not_exist_cat)
+				return render_template('reset_password.html')
+	else:
+		print 'user NOT exists'
+		flash(err_EMAIL_NOT_REGIS, user_not_exist_cat)
+		return render_template('index.html')
 
 
 @app.route('/logout')
@@ -444,13 +544,19 @@ def page_not_found(e):
 	return Response('<p>Login failed</p>')
 
 
-def get_total_users():
-	users_count = db.session.query(Users).count()
-	return users_count
-
-
 @app.route('/')
 def index():
 	print '== index =='
-	users_count = get_total_users()
-	return render_template('index.html', total_users=users_count)
+	return render_template('index.html')
+
+# TODO future feature
+# @admin.route('/admin')
+# @roles_required('admin')
+# def index():
+#     return render_template('admin_index.htm')
+#
+#
+# @admin.route('/author/create', methods=['GET', 'POST'])
+# @roles_required('admin')
+# def create_author():
+# 	return None

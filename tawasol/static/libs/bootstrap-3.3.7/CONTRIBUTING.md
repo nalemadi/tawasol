@@ -189,7 +189,7 @@ included in the project:
    git pull upstream master
    ```
 
-3. Create a new topic branch (off the main project development branch) to
+3. Create a new topic branch (off the generate_data project development branch) to
    contain your feature, change, or fix:
 
    ```bash
@@ -198,7 +198,7 @@ included in the project:
 
 4. Commit your changes in logical chunks. Please adhere to these [git commit
    message guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
-   or your code is unlikely to be merged into the main project. Use Git's
+   or your code is unlikely to be merged into the generate_data project. Use Git's
    [interactive rebase](https://help.github.com/articles/interactive-rebase)
    feature to tidy up your commits before making them public.
 
