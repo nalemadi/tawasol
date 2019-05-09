@@ -88,6 +88,11 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		result_tweet = Tweet(tweet, time_index)
 		return result_tweet
 
+	def get_language_dist(self, lang_list, limit=7):
+		lst_lang_top = sorted(lang_list, key=lambda x:x[1], reverse=True)[:limit]
+		others_lang_freq = sum([x[1] for x in sorted(lang_list, key=lambda x:x[1], reverse=True)[limit:]])
+		return map(list, lst_lang_top) + [['other', others_lang_freq]]
+
 	def get_tweets_summary_report(self):
 		"""
 		get summary of all tweets statistics
