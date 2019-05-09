@@ -7,6 +7,7 @@ from datetime import datetime
 from text_analyzer import TextAnalyzer
 from time_analyzer import TimeAnalyzer
 from pytz import timezone
+from ..utils.consts import langs_dict
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -21,7 +22,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		self.tweets_distribution = defaultdict(set)
 		self.tweets_sentiment = defaultdict(lambda: defaultdict(int))
 		self.tweets_happiness = {}
-		# self.language_distribution = defaultdict(int)
+		self.language_distribution = defaultdict(int)
 		self.hashtags = defaultdict(int)
 		# self.images = []
 		#self.users_graph_nodes = defaultdict()
@@ -118,8 +119,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
 
 		# # Language
-		# lst_lang = [[ISO639_2.get(k,k),v] for k,v in self.language_distribution.items()]
-		# result['language'] = self.get_language_dist(lst_lang)
+		lst_lang = [[langs_dict.get(k,k),v] for k,v in self.language_distribution.items()]
+		result['language'] = self.get_language_dist(lst_lang)
 
 		# Images
 		# result['images'] = self.images[(-1)*NBR_IMAGES:]
@@ -151,7 +152,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		# 	self.gender_distribution[tweet.gender] += 1
 
 		# Language
-		#self.language_distribution[tweet.lang] += 1
+		self.language_distribution[tweet.lang] += 1
 
 		# Sentiment
 		self.calculate_sentiment_dist(tweet.time_index, tweet.sentiment_score)

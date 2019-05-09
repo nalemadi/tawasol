@@ -2,6 +2,26 @@ console.log("Tawasol main JS file");
 
 $(document).ready(function() {
 
+    function generate_language_distribution(values) {
+        // language distribution
+        $('#language_distribution').highcharts({
+            chart: {
+                type: 'pie',
+                height: 250
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            series: [{
+                name: 'Used language',
+                data: values.language
+            }]
+        });
+    };
+
     function generate_hashtags(values) {
         var hashtags = values.hashtags;
         $('#hashtag').jQCloud(hashtags, {
@@ -211,6 +231,7 @@ $(document).ready(function() {
         generate_hashtags(values);
         generate_sentiment_chart(values);
         generate_happiness_chart(values);
+        generate_language_distribution(values);
     }
 
     function generate_charts(user_email) {
