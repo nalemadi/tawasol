@@ -1,66 +1,6 @@
 console.log("Tawasol main JS file");
 
 $(document).ready(function() {
-    /*
-    ============== MAP ==================
-    */
-    // Initialize the tile layers (base layers)
-    var mapbox_tawasol_apikey = 'MAPBOX_TOKEN_REMOVED',
-        mapboxUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
-        mapboxAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
-        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,' + 'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        dark = L.tileLayer(mapboxUrl, {
-            id: 'mapbox.dark',
-            attribution: mapboxAttribution,
-            accessToken: mapbox_tawasol_apikey
-        }),
-        light = L.tileLayer(mapboxUrl, {
-            id: 'mapbox.light',
-            attribution: mapboxAttribution,
-            accessToken: mapbox_tawasol_apikey
-        }),
-        satellite = L.tileLayer(mapboxUrl, {
-            id: 'mapbox.satellite',
-            attribution: mapboxAttribution,
-            accessToken: mapbox_tawasol_apikey
-        }),
-        streets = L.tileLayer(mapboxUrl, {
-            id: 'mapbox.streets',
-            attribution: mapboxAttribution,
-            accessToken: mapbox_tawasol_apikey
-        });
-
-    // initialize the map
-    // var map = L.map('map').setView([25.3, 51.3], 10);
-    //
-    var tweets_markers = L.markerClusterGroup();
-    L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
-
-    var map = L.map('map', {
-        center: [25.3, 51.49],
-        zoom: 12,
-        layers: [dark]
-    });
-
-    // Layer configuration/Management
-    var baseMaps = {
-        "Grayscale": dark,
-        "Light": light,
-        "Satellite": satellite,
-        "Streets": streets
-    };
-
-    var overlayMaps = {
-        "Tweets": tweets_markers
-    };
-    //
-    var controller = L.control.layers(baseMaps, overlayMaps);
-    controller.addTo(map);
-    //
-
-    /*
-    ============== END MAP ==================
-    */
 
     var owl_tweets = $("#owl-tweets");
 
@@ -327,6 +267,69 @@ $(document).ready(function() {
         });
     };
 
+    function generate_map() {
+            /*
+        ============== MAP ==================
+        */
+        // Initialize the tile layers (base layers)
+        var mapbox_tawasol_apikey = 'MAPBOX_TOKEN_REMOVED',
+            mapboxUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
+            mapboxAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,' + 'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            dark = L.tileLayer(mapboxUrl, {
+                id: 'mapbox.dark',
+                attribution: mapboxAttribution,
+                accessToken: mapbox_tawasol_apikey
+            }),
+            light = L.tileLayer(mapboxUrl, {
+                id: 'mapbox.light',
+                attribution: mapboxAttribution,
+                accessToken: mapbox_tawasol_apikey
+            }),
+            satellite = L.tileLayer(mapboxUrl, {
+                id: 'mapbox.satellite',
+                attribution: mapboxAttribution,
+                accessToken: mapbox_tawasol_apikey
+            }),
+            streets = L.tileLayer(mapboxUrl, {
+                id: 'mapbox.streets',
+                attribution: mapboxAttribution,
+                accessToken: mapbox_tawasol_apikey
+            });
+
+        // initialize the map
+        // var map = L.map('map').setView([25.3, 51.3], 10);
+        //
+        var tweets_markers = L.markerClusterGroup();
+        L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
+
+        var map = L.map('map', {
+            center: [25.3, 51.49],
+            zoom: 12,
+            layers: [dark]
+        });
+
+        // Layer configuration/Management
+        var baseMaps = {
+            "Grayscale": dark,
+            "Light": light,
+            "Satellite": satellite,
+            "Streets": streets
+        };
+
+        var overlayMaps = {
+            "Tweets": tweets_markers
+        };
+        //
+        var controller = L.control.layers(baseMaps, overlayMaps);
+        controller.addTo(map);
+        //
+
+        /*
+        ============== END MAP ==================
+        */
+    };
+
     ////////////////////////////
     //  Start Here          ///
     ///////////////////////////
@@ -335,5 +338,6 @@ $(document).ready(function() {
         var user_email = user_data.name;
         console.log(user_email);
         generate_charts(user_email);
+        generate_map();
     }
 });
