@@ -254,7 +254,7 @@ $(document).ready(function() {
         generate_sentiment_chart(values);
         generate_happiness_chart(values);
         generate_language_distribution(values);
-        catch_new_tweets(values.twitter.tweets)
+        catch_new_tweets(values.tweets)
     }
 
     function generate_charts(user_email) {
