@@ -136,15 +136,15 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 		# # Community Graph
 		# result['community_graph'] = {'nodes': self.users_graph_nodes, 'links': []}
 
-		# try:
-		# 	if len(self.tweets_distribution.keys()) > 0:
-		# 		result['tweets'] = [tweet for tweet in self.tweets_distribution[max(self.tweets_distribution.keys())]] # [(-1)*NBR_TWEETS:]
-		# 	else:
-		# 		result['tweets'] = []
-		#
-		# except Exception as e:
-		# 	result['tweets'] = []
-		# 	# print 'error get_tweets_summary_report', e
+		try:
+			if len(self.tweets_distribution.keys()) > 0:
+				result['tweets'] = [tweet for tweet in self.tweets_distribution[max(self.tweets_distribution.keys())]] # [(-1)*NBR_TWEETS:]
+			else:
+				result['tweets'] = []
+
+		except Exception as e:
+			result['tweets'] = []
+			# print 'error get_tweets_summary_report', e
 
 		return result
 
