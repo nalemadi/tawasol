@@ -2,6 +2,11 @@ console.log("Tawasol main JS file");
 
 $(document).ready(function() {
 
+    function owlInit(owl) {
+        owl.trigger('destroy.owl.carousel');
+        owl.html(owl.find('.owl-stage-outer').html()).removeClass('owl-loaded');
+    }
+
     var owl_tweets = $("#owl-tweets");
 
     function catch_new_tweets(tweets) {
