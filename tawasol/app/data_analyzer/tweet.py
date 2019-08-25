@@ -67,3 +67,11 @@ class Tweet():
 				self.tweet_images = []
 		else:
 			self.tweet_images = []
+
+		# coordinates
+		if tweet['coordinates'] is not None:
+			if tweet['coordinates']['type'] == "Point":
+				#[longitude, latitude]
+				self.tweet_coor = tweet['coordinates']['coordinates']
+		else:
+			self.tweet_coor = -1
