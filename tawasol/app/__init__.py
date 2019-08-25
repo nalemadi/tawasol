@@ -7,9 +7,9 @@ import os
 # Current Location
 CURR_LOC = os.path.join(os.path.dirname(__file__), 'config')
 # Configuration files
-MONGO_DB_CONFIG = yaml.load(open(CURR_LOC+'/mongodb.yml'))
-REDIS_CONFIG = yaml.load(open(CURR_LOC+'/redis.yml'))
-twitter_keys = yaml.load(open(CURR_LOC+'/keys.yml'))
+MONGO_DB_CONFIG = yaml.load(open(CURR_LOC+'/mongodb.yml'), Loader=yaml.FullLoader)
+REDIS_CONFIG = yaml.load(open(CURR_LOC+'/redis.yml'), Loader=yaml.FullLoader)
+twitter_keys = yaml.load(open(CURR_LOC+'/keys.yml'), Loader=yaml.FullLoader)
 
 # get users from sqlite
 sqlite_manager = SqliteManager()
