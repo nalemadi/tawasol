@@ -13,7 +13,10 @@ $(document).ready(function() {
         owlInit(owl_tweets)
         var content = ''
         for (var i = tweets.length - 1; i >= 0; i--) {
-            var content_item = '<div class="item"><h4>' + tweets[i] + '</h4></div>';
+            var array = tweets[i].split("\n");
+            var c_arr = array.splice(-1,1);
+            var tweet_text = c_arr.join("\n");
+            var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
             content += content_item;
         };
         owl_tweets.html(content);
