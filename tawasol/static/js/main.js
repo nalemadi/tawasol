@@ -2,6 +2,8 @@ console.log("Tawasol main JS file");
 
 $(document).ready(function() {
 
+    var map_tweets = [];
+
     function owlInit(owl) {
         owl.trigger('destroy.owl.carousel');
         owl.html(owl.find('.owl-stage-outer').html()).removeClass('owl-loaded');
@@ -15,6 +17,10 @@ $(document).ready(function() {
         for (var i = tweets.length - 1; i >= 0; i--) {
             var array = tweets[i].split("\n");
             var last_item = array.splice(-1,1);
+            if (Integer(last_item) != -1) {
+                console.log("tweet with coordinates");
+                map_tweets.push(tweets[i])
+            }
             var tweet_text = array.join("\n");
             var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
             content += content_item;
@@ -263,6 +269,34 @@ $(document).ready(function() {
         generate_happiness_chart(values);
         generate_language_distribution(values);
         catch_new_tweets(values.tweets)
+        processMapTweets()
+    }
+
+    function processMapTweets() {
+        //
+        var content = ''
+        for (var i = map_tweets.length - 1; i >= 0; i--) {
+            var array = map_tweets[i].split("\n");
+            var last_item = array.splice(-1,1);
+            var lng = last_item;
+            var lat = last_item;
+            var lightgreenMarker = L.AwesomeMarkers.icon({
+                icon: 'flame',
+                markerColor: 'lightgreen'
+            });
+            var marker = L.marker([lat, lng], {
+                icon: lightgreenMarker
+            });
+            //
+            var tweet_text = array.join("\n");
+            var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
+            content += content_item;
+            //
+            marker.bindPopup(content);
+            tweets_markers.addLayer(marker);
+            tweets_markers.addTo(map);
+        };
+        //
     }
 
     function generate_charts(user_email) {
@@ -275,6 +309,8 @@ $(document).ready(function() {
         });
     };
 
+    var map;
+    var tweets_markers;
     function generate_map() {
             /*
         ============== MAP ==================
@@ -308,10 +344,10 @@ $(document).ready(function() {
         // initialize the map
         // var map = L.map('map').setView([25.3, 51.3], 10);
         //
-        var tweets_markers = L.markerClusterGroup();
+        tweets_markers = L.markerClusterGroup();
         L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
 
-        var map = L.map('map', {
+        map = L.map('map', {
             center: [25.3, 51.49],
             zoom: 12,
             layers: [dark]
