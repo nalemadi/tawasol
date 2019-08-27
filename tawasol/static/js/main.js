@@ -17,7 +17,7 @@ $(document).ready(function() {
         for (var i = tweets.length - 1; i >= 0; i--) {
             var array = tweets[i].split("\n");
             var last_item = array.splice(-1,1);
-            if (Integer(last_item) != -1) {
+            if (parseInt(last_item) != -1) {
                 console.log("tweet with coordinates");
                 map_tweets.push(tweets[i])
             }
