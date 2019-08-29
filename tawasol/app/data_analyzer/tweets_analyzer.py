@@ -157,9 +157,9 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                 userscreen = broken[1].split('\n')[0]
                 print '===userscreen==', userscreen
                 users.append(userscreen)
-        counter_users = Counter(users)
-        users_count = [{'username': username, 'weight': freq} for username, freq in counter_users.iteritems()]
-        result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
+            counter_users = Counter(users)
+            users_count = [{'username': username, 'weight': freq} for username, freq in counter_users.iteritems()]
+            result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
 
         return result
 
