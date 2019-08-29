@@ -146,6 +146,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             result['tweets'] = []
             # print 'error get_tweets_summary_report', e
 
+
         # top_users
         if len(result['tweets']) is not 0:
             # [tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S'), str(tweet.tweet_coor)]
