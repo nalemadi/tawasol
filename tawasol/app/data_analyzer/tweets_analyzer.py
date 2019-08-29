@@ -146,19 +146,19 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             result['tweets'] = []
             # print 'error get_tweets_summary_report', e
 
-            # top_users
-            if len(result['tweets']) is not 0:
-                # [tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S'), str(tweet.tweet_coor)]
-                tweets = result['tweets']
-                users = []
-                for tweet in tweets:
-                    broken = tweet.split('-- ')
-                    userscreen = broken[1].split('\n')[0]
-                    print '===userscreen==', userscreen
-                    users.append(userscreen)
-            counter_users = Counter(users)
-            users_count = [{'username': username, 'weight': freq} for username, freq in counter_users.iteritems()]
-            result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
+        # top_users
+        if len(result['tweets']) is not 0:
+            # [tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S'), str(tweet.tweet_coor)]
+            tweets = result['tweets']
+            users = []
+            for tweet in tweets:
+                broken = tweet.split('-- ')
+                userscreen = broken[1].split('\n')[0]
+                print '===userscreen==', userscreen
+                users.append(userscreen)
+        counter_users = Counter(users)
+        users_count = [{'username': username, 'weight': freq} for username, freq in counter_users.iteritems()]
+        result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
 
         return result
 
