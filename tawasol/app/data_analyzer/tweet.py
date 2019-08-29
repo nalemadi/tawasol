@@ -72,6 +72,7 @@ class Tweet():
 		if tweet['coordinates'] is not None:
 			if tweet['coordinates']['type'] == "Point":
 				#[longitude, latitude]
-				self.tweet_coor = tweet['coordinates']['coordinates']
+				coordinates = tweet['coordinates']['coordinates']
+				self.tweet_coor = coordinates[0]+','+coordinates[1]
 		else:
 			self.tweet_coor = -1

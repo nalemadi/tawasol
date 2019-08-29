@@ -269,6 +269,8 @@ $(document).ready(function() {
         generate_happiness_chart(values);
         generate_language_distribution(values);
         catch_new_tweets(values.tweets)
+        console.log("test top_users");
+        console.log(values.top_users);
         processMapTweets()
     }
 
