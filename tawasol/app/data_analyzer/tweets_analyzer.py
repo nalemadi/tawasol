@@ -152,14 +152,21 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             # [tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S'), str(tweet.tweet_coor)]
             tweets = result['tweets']
             users = []
+            tweets_arr = []
             for tweet in tweets:
                 broken = tweet.split('-- ')
+                tweet_text = broken[0]
+                tweets_arr.append(tweet_text)
                 userscreen = broken[1].split('\n')[0]
-                print '===userscreen==', userscreen
+                #print '===userscreen==', userscreen
                 users.append(userscreen)
             counter_users = Counter(users)
             users_count = [{'username': username, 'weight': freq} for username, freq in counter_users.iteritems()]
             result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
+            #
+            counter_tweets = Counter(tweets_arr)
+            tweets_count = [{'text': tweet_txt, 'weight': freq} for tweet_txt, freq in counter_tweets.iteritems()]
+            result['top_tweets'] = sorted(tweets_count, key=lambda x: x['weight'], reverse=True)[:10]
 
         return result
 
