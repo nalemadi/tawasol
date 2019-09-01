@@ -17,7 +17,7 @@ $(document).ready(function() {
         var content = ''
         for (var i = tweets.length - 1; i >= 0; i--) {
             var array = tweets[i].split("\n");
-            var last_item = array.splice(-1,1);
+            var last_item = array.splice(-1, 1);
             if (parseInt(last_item) != -1) {
                 console.log("tweet with coordinates");
                 map_tweets.push(tweets[i])
@@ -303,12 +303,12 @@ $(document).ready(function() {
 
     function processMapTweets() {
         //
-        var content = '';
         for (var i = map_tweets.length - 1; i >= 0; i--) {
             var array = map_tweets[i].split("\n");
-            var last_item = array.splice(-1,1);
-            var lng = last_item;
-            var lat = last_item;
+            var last_item = array.splice(-1, 1);
+            var broken = last_item[0].split(",");
+            var lng = parseInt(broken[0]);
+            var lat = parseInt(broken[1]);
             var lightgreenMarker = L.AwesomeMarkers.icon({
                 icon: 'flame',
                 markerColor: 'lightgreen'
@@ -319,9 +319,8 @@ $(document).ready(function() {
             //
             var tweet_text = array.join("\n");
             var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
-            content += content_item;
             //
-            marker.bindPopup(content);
+            marker.bindPopup(content_item);
             tweets_markers.addLayer(marker);
             tweets_markers.addTo(map);
         }
@@ -330,7 +329,7 @@ $(document).ready(function() {
 
     function generate_charts(user_email) {
         console.log("inside generate");
-        var url = '/get_info/'+user_email;
+        var url = '/get_info/' + user_email;
         $.getJSON(url, function(values, responseText, jqXHR) {
             if (jqXHR.status != 204) {
                 generate_stat_nbrs(values.twitter);
@@ -340,8 +339,9 @@ $(document).ready(function() {
 
     var map;
     var tweets_markers;
+
     function generate_map() {
-            /*
+        /*
         ============== MAP ==================
         */
         // Initialize the tile layers (base layers)
