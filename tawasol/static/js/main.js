@@ -10,6 +10,7 @@ $(document).ready(function() {
     }
 
     var owl_tweets = $("#owl-tweets");
+    var owl_top_tweets = $("#owl-top-tweets");
 
     function catch_new_tweets(tweets) {
         owlInit(owl_tweets)
@@ -24,7 +25,7 @@ $(document).ready(function() {
             var tweet_text = array.join("\n");
             var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
             content += content_item;
-        };
+        }
         owl_tweets.html(content);
         owl_tweets.owlCarousel({
             items: 4,
@@ -35,7 +36,7 @@ $(document).ready(function() {
             dots: false,
             loop: false
         });
-    };
+    }
 
 
     function generate_language_distribution(values) {
@@ -56,7 +57,7 @@ $(document).ready(function() {
                 data: values.language
             }]
         });
-    };
+    }
 
     function generate_hashtags(values) {
         var hashtags = values.hashtags;
@@ -259,6 +260,32 @@ $(document).ready(function() {
         $('#last_update').text(moment(current_time).format("HH:mm"));
     }
 
+    function generate_top_users(top_users) {
+        $('#owl-top-users').jQCloud(top_users, {
+            autoResize: true
+        });
+    }
+
+    function generate_top_tweets(top_tweets) {
+        owlInit(owl_top_tweets);
+        var content = '';
+        for (var i = top_tweets.length - 1; i >= 0; i--) {
+            var tweet_text = top_tweets[i]["text"];
+            var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
+            content += content_item;
+        }
+        owl_top_tweets.html(content);
+        owl_top_tweets.owlCarousel({
+            items: 4,
+            lazyLoad: false,
+            margin: 10,
+            nav: true,
+            autoplay: true,
+            dots: false,
+            loop: false
+        });
+    }
+
     function generate_stat_nbrs(values) {
         update_tweets_count(values.nbr_tweets);
         update_users_count(values.nbr_users);
@@ -268,15 +295,15 @@ $(document).ready(function() {
         generate_sentiment_chart(values);
         generate_happiness_chart(values);
         generate_language_distribution(values);
-        catch_new_tweets(values.tweets)
-        console.log("test top_users");
-        console.log(values.top_users);
+        catch_new_tweets(values.tweets);
+        generate_top_users(values.top_users);
+        generate_top_tweets(values.top_tweets);
         processMapTweets()
     }
 
     function processMapTweets() {
         //
-        var content = ''
+        var content = '';
         for (var i = map_tweets.length - 1; i >= 0; i--) {
             var array = map_tweets[i].split("\n");
             var last_item = array.splice(-1,1);
@@ -297,7 +324,7 @@ $(document).ready(function() {
             marker.bindPopup(content);
             tweets_markers.addLayer(marker);
             tweets_markers.addTo(map);
-        };
+        }
         //
     }
 
@@ -309,7 +336,7 @@ $(document).ready(function() {
                 generate_stat_nbrs(values.twitter);
             }
         });
-    };
+    }
 
     var map;
     var tweets_markers;
@@ -374,7 +401,7 @@ $(document).ready(function() {
         /*
         ============== END MAP ==================
         */
-    };
+    }
 
     ////////////////////////////
     //  Start Here          ///
