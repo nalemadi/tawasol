@@ -298,7 +298,6 @@ $(document).ready(function() {
         catch_new_tweets(values.tweets);
         generate_top_users(values.top_users);
         generate_top_tweets(values.top_tweets);
-        processMapTweets()
     }
 
     function processMapTweets() {
@@ -397,7 +396,7 @@ $(document).ready(function() {
         var controller = L.control.layers(baseMaps, overlayMaps);
         controller.addTo(map);
         //
-
+        processMapTweets();
         /*
         ============== END MAP ==================
         */
