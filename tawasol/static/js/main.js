@@ -13,8 +13,8 @@ $(document).ready(function() {
     var owl_top_tweets = $("#owl-top-tweets");
 
     function catch_new_tweets(tweets) {
-        owlInit(owl_tweets)
-        var content = ''
+        owlInit(owl_tweets);
+        var content = '';
         for (var i = tweets.length - 1; i >= 0; i--) {
             var array = tweets[i].split("\n");
             var last_item = array.splice(-1, 1);
@@ -134,7 +134,9 @@ $(document).ready(function() {
     function generate_users_distribution(values) {
         // User distribution for users
         $('#users_distribution').highcharts({
+            colors: ['#FF8A33'],
             chart: {
+                type: 'area',
                 zoomType: 'x',
                 height: 250
             },
@@ -157,7 +159,7 @@ $(document).ready(function() {
             },
             plotOptions: {
                 area: {
-                    fillColor: {
+                    /*fillColor: {
                         linearGradient: {
                             x1: 0,
                             y1: 0,
@@ -167,8 +169,13 @@ $(document).ready(function() {
                         stops: [
                             [0, Highcharts.getOptions().colors[0]],
                             [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        ]
+                        ]*/
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
                     },
+
                     marker: {
                         radius: 2
                     },
@@ -184,7 +191,8 @@ $(document).ready(function() {
             series: [{
                 type: 'area',
                 name: 'Number of users',
-                data: values.users
+                data: values.users,
+                color: '#FF8A33'
             }]
         });
     }
@@ -192,6 +200,7 @@ $(document).ready(function() {
     function generate_happiness_chart(values) {
         // Happiness distribution for tweets
         $('#happiness_distribution').highcharts({
+            colors: ['#40ccb5'],
             chart: {
                 zoomType: 'x',
                 height: 250
@@ -242,7 +251,8 @@ $(document).ready(function() {
             series: [{
                 type: 'area',
                 name: 'happiness score',
-                data: values.happiness
+                data: values.happiness,
+                color: '#40ccb5'
             }]
         });
     }
@@ -267,15 +277,18 @@ $(document).ready(function() {
     }
 
     function generate_top_tweets(top_tweets) {
-        owlInit(owl_top_tweets);
+        console.log("===== top tweets ====");
+        //owlInit(owl_top_tweets);
         var content = '';
-        for (var i = top_tweets.length - 1; i >= 0; i--) {
+        for (var i = 0; i < top_tweets.length; i++) {
             var tweet_text = top_tweets[i]["text"];
-            var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
+            var tweet_weight = top_tweets[i]["weight"];
+            //var content_item = '<div class="item"><h4>' + tweet_text + '</h4></div>';
+            var content_item = '<div class="row"><div class="col-xs-1" align="center"><h4>' + tweet_weight + '</h4></div><div class="col-xs-10"><h4>' + tweet_text + '</h4></div></div>';
             content += content_item;
         }
         owl_top_tweets.html(content);
-        owl_top_tweets.owlCarousel({
+        /*owl_top_tweets.owlCarousel({
             items: 4,
             lazyLoad: false,
             margin: 10,
@@ -283,7 +296,7 @@ $(document).ready(function() {
             autoplay: true,
             dots: false,
             loop: false
-        });
+        });*/
     }
 
     function generate_stat_nbrs(values) {
@@ -301,6 +314,8 @@ $(document).ready(function() {
     }
 
     function processMapTweets() {
+        console.log("map tweets length");
+        console.log(map_tweets.length);
         //
         for (var i = map_tweets.length - 1; i >= 0; i--) {
             var array = map_tweets[i].split("\n");
