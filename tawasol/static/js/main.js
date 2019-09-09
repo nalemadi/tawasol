@@ -66,7 +66,7 @@ $(document).ready(function() {
         });
     }
 
-    function generate_sentiment_chart(values) {
+    function generate_sentiment_chart(values, categories) {
         // Sentiment Chart for Tweets
         $('#chart_sentiment').highcharts({
             colors: ['#27ae60', '#e74c3c', '#7f8c8d'],
@@ -78,7 +78,7 @@ $(document).ready(function() {
                 text: ''
             },
             xAxis: {
-                categories: values.categories,
+                categories: categories,
                 tickmarkPlacement: 'on',
             },
             yAxis: {
@@ -131,7 +131,7 @@ $(document).ready(function() {
         });
     }
 
-    function generate_users_distribution(values) {
+    function generate_users_distribution(values, categories) {
         // User distribution for users
         $('#users_distribution').highcharts({
             colors: ['#FF8A33'],
@@ -147,7 +147,7 @@ $(document).ready(function() {
                 text: ''
             },
             xAxis: {
-                categories: values.categories
+                categories: categories
             },
             yAxis: {
                 title: {
@@ -197,7 +197,7 @@ $(document).ready(function() {
         });
     }
 
-    function generate_happiness_chart(values) {
+    function generate_happiness_chart(values, categories) {
         // Happiness distribution for tweets
         $('#happiness_distribution').highcharts({
             colors: ['#40ccb5'],
@@ -212,7 +212,7 @@ $(document).ready(function() {
                 text: ''
             },
             xAxis: {
-                categories: values.categories
+                categories: categories
             },
             yAxis: {
                 title: {
@@ -299,13 +299,35 @@ $(document).ready(function() {
         });*/
     }
 
+    function update_categories_format(categories) {
+        //console.log(categories);
+        var up_categories = [];
+        console.log(categories);
+        const months = ["JAN", "FEB", "MAR","APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        for (var i=0; i<categories.length; i++) {
+            var category = categories[i];
+            //var cat_date = Date.parse(category);
+            var d= new Date(category);
+            //console.log(d);
+            var dday = ("0"+(d.getDate())).slice(-2);
+            var dhour = ("0"+(d.getHours())).slice(-2);
+            var dminutes = ("0"+(d.getMinutes())).slice(-2);
+            var dmonth = months[d.getMonth()];
+            var new_date = dday+"-"+dmonth+" "+dhour+":"+dminutes;
+            up_categories.push(new_date);
+        }
+        return up_categories
+    }
+
     function generate_stat_nbrs(values) {
+        // change categories format
+        var categories = update_categories_format(values.categories);
         update_tweets_count(values.nbr_tweets);
         update_users_count(values.nbr_users);
         update_date();
-        generate_users_distribution(values);
+        generate_users_distribution(values, categories);
         generate_hashtags(values);
-        generate_sentiment_chart(values);
+        generate_sentiment_chart(values, categories);
         generate_happiness_chart(values);
         generate_language_distribution(values);
         catch_new_tweets(values.tweets);
