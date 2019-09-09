@@ -224,7 +224,7 @@ $(document).ready(function() {
             },
             plotOptions: {
                 area: {
-                    fillColor: {
+                    /*fillColor: {
                         linearGradient: {
                             x1: 0,
                             y1: 0,
@@ -235,7 +235,7 @@ $(document).ready(function() {
                             [0, Highcharts.getOptions().colors[0]],
                             [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                         ]
-                    },
+                    },*/
                     marker: {
                         radius: 2
                     },
