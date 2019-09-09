@@ -328,7 +328,7 @@ $(document).ready(function() {
         generate_users_distribution(values, categories);
         generate_hashtags(values);
         generate_sentiment_chart(values, categories);
-        generate_happiness_chart(values);
+        generate_happiness_chart(values, categories);
         generate_language_distribution(values);
         catch_new_tweets(values.tweets);
         generate_top_users(values.top_users);
