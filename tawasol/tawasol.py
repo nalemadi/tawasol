@@ -276,6 +276,7 @@ def crawling_settings():
 				# restarting the crawler if there is any change
 				print 'There are changes in Keywords/Accounts ... restarting the crawler'
 				subprocess.call(".[REDACTED_FPATH]tawasol/tawasol_restart_crawler_process.sh")
+				print 'restart is done'
 
 			return render_template('crawling_settings.html', authenticated=True, current_username=current_username, user_keywords=keywords, user_accounts=accounts)
 		else:
