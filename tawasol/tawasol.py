@@ -11,6 +11,7 @@ import uuid
 import datetime
 import time
 from sqlalchemy import and_
+import subprocess
 
 app = Flask(__name__)
 
@@ -168,6 +169,7 @@ def login():
 @app.route("/crawling_settings", methods=["GET", "POST"])
 @login_required
 def crawling_settings():
+	is_changed = False
 	print '=== crawling_settings ==='
 	user_email = session['user_id']
 	user = Users.query.get(user_email)
@@ -190,6 +192,7 @@ def crawling_settings():
 				print 'submitted_keywords is not None', submitted_keywords
 				keywords_broken = [k.strip().lower() for k in submitted_keywords.split(',') if len(k.strip()) > 1]
 				if keywords_broken:
+					is_changed = True
 					if keywords:
 						keywords_from_db = keywords.strip().split(',')
 						print 'keywords_from_db:', keywords_from_db, 'keywords_broken', keywords_broken
@@ -219,6 +222,7 @@ def crawling_settings():
 			else:
 				print 'empty submitted keywords'
 				if keywords:
+					is_changed = True
 					delete_all_records_from_keywords(user_email)
 					flash(succ_KEY_CHANGED, settings_changed_cat)
 				else:
@@ -231,6 +235,7 @@ def crawling_settings():
 				#accounts_broken = submitted_accounts.split(',')
 				accounts_broken = [k.strip().lower() for k in submitted_accounts.split(',') if len(k.strip()) > 1]
 				if accounts_broken:
+					is_changed = True
 					if accounts:
 						accounts_from_db = accounts.strip().split(',')
 						print 'accounts_from_db:', accounts_from_db, 'accounts_broken', accounts_broken
@@ -256,6 +261,7 @@ def crawling_settings():
 			else:
 				print 'empty submitted accounts'
 				if accounts:
+					is_changed = True
 					delete_all_records_from_accounts(user.email)
 					flash(succ_ACC_CHANGED, settings_changed_cat)
 				else:
@@ -265,6 +271,12 @@ def crawling_settings():
 			#get updated keywords and accounts from DB
 			keywords = get_all_keywords(user_email)
 			accounts = get_all_accounts(user_email)
+
+			if is_changed:
+				# restarting the crawler if there is any change
+				print 'There are changes in Keywords/Accounts ... restarting the crawler'
+				subprocess.call("./tawasol_restart_crawler_process.sh")
+
 			return render_template('crawling_settings.html', authenticated=True, current_username=current_username, user_keywords=keywords, user_accounts=accounts)
 		else:
 			flash(err_USER_NOT_FOUND, user_not_found_cat)
