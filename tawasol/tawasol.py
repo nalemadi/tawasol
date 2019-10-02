@@ -16,7 +16,7 @@ from subprocess import PIPE
 
 
 def get_shell_script_output_using_communicate():
-    session = subprocess.Popen(['.[REDACTED_FPATH]tawasol/tawasol_restart_crawler_process.sh'], stdout=PIPE, stderr=PIPE)
+    session = subprocess.Popen(['sh [REDACTED_FPATH]tawasol/tawasol_restart_crawler_process.sh'], stdout=PIPE, stderr=PIPE)
     stdout, stderr = session.communicate()
     if stderr:
         raise Exception("Error "+str(stderr))
