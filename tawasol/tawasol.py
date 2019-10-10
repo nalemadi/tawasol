@@ -15,12 +15,9 @@ import subprocess
 from subprocess import PIPE
 
 
-def get_shell_script_output_using_communicate():
-    session = subprocess.Popen(['sh [REDACTED_FPATH]tawasol/tawasol_restart_crawler_process.sh'], stdout=PIPE, stderr=PIPE)
-    stdout, stderr = session.communicate()
-    if stderr:
-        raise Exception("Error "+str(stderr))
-    #return stdout.decode('utf-8')
+def run_shell_script():
+	#f = open('[REDACTED_FPATH]tawasol/cron.log', 'a')
+	subprocess.call('sh [REDACTED_FPATH]tawasol/tawasol_restart_crawler_process.sh', shell=True)
 
 
 app = Flask(__name__)
@@ -285,7 +282,7 @@ def crawling_settings():
 			if is_changed:
 				# restarting the crawler if there is any change
 				print 'There are changes in Keywords/Accounts ... restarting the crawler'
-				get_shell_script_output_using_communicate()
+				run_shell_script()
 				print 'restart is done'
 
 			return render_template('crawling_settings.html', authenticated=True, current_username=current_username, user_keywords=keywords, user_accounts=accounts)
