@@ -120,7 +120,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         result['users'] = [len(list(self.users_distribution[x])) for x in self.categories]
 
         # Hashtags Chart
-        users_hashtags = [{'text': hashtag, 'weight': freq, 'link': '%s%s' % ('https://twitter.com/hashtag/', hashtag), 'target':'_blank'} for hashtag, freq in self.hashtags.iteritems()]
+        users_hashtags = [{'text': hashtag, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/hashtag/', hashtag), 'target': '_blank'}} for hashtag, freq in self.hashtags.iteritems()]
         result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
 
         # # Language
@@ -162,7 +162,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                     users.append(userscreen)
             #
             counter_users = Counter(users)
-            users_count = [{'text': username, 'weight': freq, 'link': '%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank'} for username, freq in counter_users.iteritems()]
+            users_count = [{'text': username, 'weight': freq, 'link': {'href':'%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank'}} for username, freq in counter_users.iteritems()]
             result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
             counter_tweets = Counter(tweets_arr)
             tweets_count = [{'text': tweet_txt, 'weight': freq} for tweet_txt, freq in counter_tweets.iteritems()]
