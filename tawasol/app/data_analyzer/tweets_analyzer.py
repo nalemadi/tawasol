@@ -26,7 +26,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         self.hashtags = defaultdict(int)
         # self.images = []
         #self.users_graph_nodes = defaultdict()
-        #self.gender_distribution = {'female': 0, 'male': 0}
+        self.gender_distribution = {'female': 0, 'male': 0}
         #self.community_graph = {'nodes': [], 'links': []}
         #self.users_graph_links = set()
         self.start_time = datetime.utcnow()
@@ -120,7 +120,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         result['users'] = [len(list(self.users_distribution[x])) for x in self.categories]
 
         # Hashtags Chart
-        users_hashtags = [{'text': hashtag, 'weight': freq, 'link': '%s%s' % ('https://twitter.com/hashtag/', hashtag)} for hashtag, freq in self.hashtags.iteritems()]
+        users_hashtags = [{'text': hashtag, 'weight': freq, 'link': '%s%s' % ('https://twitter.com/hashtag/', hashtag), 'target':'_blank'} for hashtag, freq in self.hashtags.iteritems()]
         result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
 
         # # Language
@@ -130,8 +130,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         # Images
         # result['images'] = self.images[(-1)*NBR_IMAGES:]
 
-        # # Gender Distribution
-        # result['gender'] = [['Female', self.gender_distribution['female']],['Male', self.gender_distribution['male']]]
+        # Gender Distribution
+        result['gender'] = [['Female', self.gender_distribution['female']], ['Male', self.gender_distribution['male']]]
 
         # # Community Graph
         # result['community_graph'] = {'nodes': self.users_graph_nodes, 'links': []}
@@ -158,10 +158,11 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                 tweets_arr.append(tweet_text)
                 userscreen = broken[1].split('\n')[0]
                 #print '===userscreen==', userscreen
-                users.append(userscreen)
+                if userscreen.startswith('@'):
+                    users.append(userscreen)
             #
             counter_users = Counter(users)
-            users_count = [{'text': username, 'weight': freq, 'link': '%s%s' % ('https://twitter.com/', username.split('@')[1])} for username, freq in counter_users.iteritems()]
+            users_count = [{'text': username, 'weight': freq, 'link': '%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank'} for username, freq in counter_users.iteritems()]
             result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
             counter_tweets = Counter(tweets_arr)
             tweets_count = [{'text': tweet_txt, 'weight': freq} for tweet_txt, freq in counter_tweets.iteritems()]
@@ -173,9 +174,9 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         # time_index
         self.categories.add(tweet.time_index)
 
-        # # Gender
-        # if tweet.gender is not None:
-        # 	self.gender_distribution[tweet.gender] += 1
+        # Gender
+        if tweet.gender is not None:
+            self.gender_distribution[tweet.gender] += 1
 
         # Language
         self.language_distribution[tweet.lang] += 1

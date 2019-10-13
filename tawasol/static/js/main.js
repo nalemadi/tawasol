@@ -38,6 +38,26 @@ $(document).ready(function() {
         });
     }
 
+    function generate_gender_distribution(values) {
+        // gender distribution
+        $('#gender_distribution').highcharts({
+            chart: {
+                type: 'pie',
+                height: 250
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            series: [{
+                name: 'Gender',
+                data: values.gender
+            }]
+        });
+    };
+
 
     function generate_language_distribution(values) {
         // language distribution
@@ -330,6 +350,7 @@ $(document).ready(function() {
         generate_sentiment_chart(values, categories);
         generate_happiness_chart(values, categories);
         generate_language_distribution(values);
+        generate_gender_distribution(values);
         catch_new_tweets(values.tweets);
         generate_top_users(values.top_users);
         generate_top_tweets(values.top_tweets);
