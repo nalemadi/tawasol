@@ -1,6 +1,10 @@
 from time_analyzer import TimeAnalyzer
 from text_analyzer import TextAnalyzer
+from app.models.genderizer.genderizer_client import *
 
+
+# model to infer whether the user is male/female
+genderizer = Genderizer(male_fname='./data/male.txt', female_fname='./data/female.txt')
 text_analyzer = TextAnalyzer()
 time_analyzer = TimeAnalyzer()
 
@@ -12,6 +16,18 @@ class Tweet():
 		# time / time index
 		self.created_at = tweet['created_at']
 		self.time_index = time_index
+
+		if 'gender' in tweet:
+			self.gender = tweet['gender']
+		else:
+			# name
+			names = tweet['user']['name'].split(' ')
+			# gender
+			if len(names) > 0:
+				self.gender = genderizer.infer_gender(names[0])
+			else:
+				self.gender = None
+
 
 		# name
 		self.names = tweet['user']['name'].split(' ')
