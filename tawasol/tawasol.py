@@ -559,6 +559,17 @@ def contact():
 		return render_template('contact.html')
 
 
+@app.route('/about')
+def contact():
+	if 'user_id' in session.keys():
+		user_email = session['user_id']
+		user = Users.query.get(user_email)
+		current_username = user.username.title()
+		return render_template('about.html', authenticated=True, current_user=user, current_username=current_username)
+	else:
+		return render_template('about.html')
+
+
 @app.errorhandler(401)
 def page_not_found(e):
 	return Response('<p>Login failed</p>')
