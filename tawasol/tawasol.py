@@ -560,7 +560,7 @@ def contact():
 
 
 @app.route('/about')
-def contact():
+def about():
 	if 'user_id' in session.keys():
 		user_email = session['user_id']
 		user = Users.query.get(user_email)
