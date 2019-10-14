@@ -162,7 +162,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                     users.append(userscreen)
             #
             counter_users = Counter(users)
-            users_count = [{'text': username, 'weight': freq, 'link': {'href':'%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank'}} for username, freq in counter_users.iteritems()]
+            users_count = [{'text': username, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank'}} for username, freq in counter_users.iteritems()]
             result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
             counter_tweets = Counter(tweets_arr)
             tweets_count = [{'text': tweet_txt, 'weight': freq} for tweet_txt, freq in counter_tweets.iteritems()]
