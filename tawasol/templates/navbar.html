@@ -5,12 +5,13 @@
             {% if authenticated %}
                 <a class="navbar-brand" href="/home">Tawasol</a>
             {% else %}
-                <a class="navbar-brand" href="/about">Tawasol</a>
+                <a class="navbar-brand" href="/">Tawasol</a>
             {% endif%}
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if authenticated %}
