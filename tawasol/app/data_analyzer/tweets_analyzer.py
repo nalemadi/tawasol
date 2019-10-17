@@ -152,10 +152,18 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             tweets = result['tweets']
             users = []
             tweets_arr = []
+            mentions = []
             for tweet in tweets:
                 broken = tweet.split('-- ')
                 tweet_text = broken[0]
                 tweets_arr.append(tweet_text)
+                m_broken = tweet_text.split('@')
+                if len(m_broken) > 1:
+                    user = m_broken[1].split(' ')[0]
+                    if user:
+                        mention = '@' + user
+                        mentions.append(mention)
+
                 userscreen = broken[1].split('\n')[0]
                 #print '===userscreen==', userscreen
                 if userscreen.startswith('@'):
@@ -163,10 +171,15 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             #
             counter_users = Counter(users)
             users_count = [{'text': username, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank'}} for username, freq in counter_users.iteritems()]
-            result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:10]
+            result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:20]
+            ###
+            counter_mentions = Counter(mentions)
+            mentions_count = [{'text': mention, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', mention.split('@')[1]), 'target': '_blank'}} for mention, freq in counter_mentions.iteritems()]
+            result['top_mentions'] = sorted(mentions_count, key=lambda x: x['weight'], reverse=True)[:20]
+            ###
             counter_tweets = Counter(tweets_arr)
             tweets_count = [{'text': tweet_txt, 'weight': freq} for tweet_txt, freq in counter_tweets.iteritems()]
-            result['top_tweets'] = sorted(tweets_count, key=lambda x:x['weight'], reverse=True)[:10]
+            result['top_tweets'] = sorted(tweets_count, key=lambda x:x['weight'], reverse=True)[:20]
 
         return result
 

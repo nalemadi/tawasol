@@ -54,7 +54,8 @@ $(document).ready(function() {
             series: [{
                 name: 'Gender',
                 data: values.gender
-            }]
+            }],
+            colors:['#EA74E5', '#5DC0F6']
         });
     };
 
@@ -319,6 +320,12 @@ $(document).ready(function() {
         });*/
     }
 
+    function generate_top_mentions(top_mentions) {
+        $('#owl-top-mentions').jQCloud(top_mentions, {
+            autoResize: true
+        });
+    }
+
     function update_categories_format(categories) {
         //console.log(categories);
         var up_categories = [];
@@ -353,6 +360,7 @@ $(document).ready(function() {
         generate_gender_distribution(values);
         catch_new_tweets(values.tweets);
         generate_top_users(values.top_users);
+        generate_top_users(values.top_mentions);
         generate_top_tweets(values.top_tweets);
     }
 
