@@ -360,7 +360,7 @@ $(document).ready(function() {
         generate_gender_distribution(values);
         catch_new_tweets(values.tweets);
         generate_top_users(values.top_users);
-        generate_top_users(values.top_mentions);
+        generate_top_mentions(values.top_mentions);
         generate_top_tweets(values.top_tweets);
     }
 
