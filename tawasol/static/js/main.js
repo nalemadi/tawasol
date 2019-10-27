@@ -343,6 +343,15 @@ $(document).ready(function() {
             chart: {
                 type: 'column'
             },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            legend: {
+                enabled: false
+            },
             xAxis: {
                 categories: categories,
                 title: { text: 'Age of Accounts' }
@@ -367,6 +376,15 @@ $(document).ready(function() {
         $('#tweets_counter').highcharts({
             chart: {
                 type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            legend: {
+                enabled: false
             },
             xAxis: {
                 categories: categories,

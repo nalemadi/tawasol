@@ -175,11 +175,11 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                     users.append(userscreen)
             #
             counter_users = Counter(users)
-            users_count = [{'text': username, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank'}} for username, freq in counter_users.iteritems()]
+            users_count = [{'text': username, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank', 'title':'This user tweeted %s times'%(freq)}} for username, freq in counter_users.iteritems()]
             result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:20]
             ###
             counter_mentions = Counter(mentions)
-            mentions_count = [{'text': mention, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', mention.split('@')[1]), 'target': '_blank'}} for mention, freq in counter_mentions.iteritems()]
+            mentions_count = [{'text': mention, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', mention.split('@')[1]), 'target': '_blank', 'title':'This user is mentioned %s times'%(freq)}} for mention, freq in counter_mentions.iteritems()]
             result['top_mentions'] = sorted(mentions_count, key=lambda x: x['weight'], reverse=True)[:20]
             ###
             counter_tweets = Counter(tweets_arr)
