@@ -60,7 +60,8 @@ class Tweet():
 		self.hashtags = [x.get(u'text') for x in tweet.get('entities').get('hashtags')]
 
 		# user profile
-		self.user_profile = {'frequency': 1, 'uid': self.tweet_id, 'user_bio': tweet['user']['description'], 'user_img': tweet['user']['profile_image_url'], 'user_name': self.screen_name, 'account_creation':tweet['user']['created_at'], 'tweets_count': tweet['user']['statuses_count']}
+		self.user_profile = {'frequency': 1, 'uid': self.tweet_id, 'user_bio': tweet['user']['description'], 'user_img': tweet['user']['profile_image_url'], 'user_name': self.screen_name}
+		self.user_info = {'user_id': tweet['user']['id_str'], 'account_creation':tweet['user']['created_at'], 'tweets_count': tweet['user']['statuses_count']}
 
 		# tweet emotion
 		if 'emotion' not in tweet.keys():

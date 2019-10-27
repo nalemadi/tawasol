@@ -74,6 +74,14 @@ class TimeAnalyzer:
 	# 			return curr_time_slot.strftime('%Y-%m-%dT%H:%M')
 	# 	return None
 
+	def get_accounts_creation_ranges(self):
+		self.current_date = datetime.now().date()
+		self.week_ago = self.current_date - timedelta(days=7)
+		self.month_age = self.current_date - timedelta(days=30)
+		self.months_3_ago = self.current_date - timedelta(days=90)
+		self.months_6_ago = self.current_date - timedelta(days=180)
+		self.year_ago = self.current_date - timedelta(days=365)
+
 	def get_time_index(self, tweet_date, time_slots):
 		"""
 		:param tweet_date:
@@ -84,3 +92,22 @@ class TimeAnalyzer:
 			if curr_time_slot <= tweet_date < next_time_slot:
 				return curr_time_slot.strftime('%Y-%m-%dT%H:%M')
 		return None
+
+	def get_account_creation_cat(self, creation_date_st):
+		range = '+Year'
+		creation_date = datetime.strptime(creation_date_st, '%a %b %d %H:%M:%S +0000 %Y').date()
+		if self.week_ago <= creation_date <= self.current_date:
+			range = 'Week'
+		elif self.month_age <= creation_date <= self.current_date:
+			range = 'Month'
+		elif self.months_3_ago <= creation_date <= self.current_date:
+			range = '3-Months'
+		elif self.months_6_ago <= creation_date <= self.current_date:
+			range = '6-Months'
+		elif self.year_ago <= creation_date <= self.current_date:
+			range = 'Year'
+		elif creation_date < self.year_ago:
+			range = '+Year'
+		else:
+			print 'error in get_account_creation_range'
+		return range

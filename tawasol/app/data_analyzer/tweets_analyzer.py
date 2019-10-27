@@ -30,7 +30,10 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         #self.community_graph = {'nodes': [], 'links': []}
         #self.users_graph_links = set()
         self.start_time = datetime.utcnow()
-        self.users_profile = defaultdict(set)
+        self.users_profile = dict()
+        self.accounts_creation = {'Week': 0, 'Month': 0, '3-Months': 0, '6-Months': 0, 'Year': 0, '+Year': 0}
+        self.accounts_tweets_counter = {'Week': 0, 'Month': 0, '3-Months': 0, '6-Months': 0, 'Year': 0, '+Year': 0}
+        self.account_age_cat = ['Week', 'Month', '3-Months', '6-Months', 'Year', '+Year']
 
     def process_tweet(self, tweet, users_dict):
         """
@@ -182,6 +185,10 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             counter_tweets = Counter(tweets_arr)
             tweets_count = [{'text': tweet_txt, 'weight': freq} for tweet_txt, freq in counter_tweets.iteritems()]
             result['top_tweets'] = sorted(tweets_count, key=lambda x:x['weight'], reverse=True)[:20]
+            ###
+            result['account_age_cat'] = self.account_age_cat
+            result['account_creation'] = [self.accounts_creation[y] for y in self.account_age_cat]
+            result['accounts_tweets_counter'] = [self.accounts_tweets_counter[y] for y in self.account_age_cat]
 
         return result
 
@@ -247,17 +254,31 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         else:
             self.tweets_sentiment[date_index]['neutral'] += 1
 
+    def populate_account_creation_info(self, result_tweet):
+        creation_date = result_tweet.user_info['account_creation']
+        tweets_count = result_tweet.user_info['tweets_count']
+        user_id = result_tweet.user_info['user_id']
+        if user_id not in self.users_profile.keys():
+            self.users_profile[user_id] = {'creation_date': creation_date,
+                                                                 'tweets_count': tweets_count}
+            cat = self.get_account_creation_cat(creation_date)
+            self.accounts_creation[cat] += 1
+            self.accounts_tweets_counter[cat] += tweets_count
+
     def get_analyzed_tweets(self, tweets):
         """
         :param tweets:
         :return:
         """
         self.time_slots = self.get_all_timeslots()
+        self.get_account_creation_range()
         # This is iterating over PyMongoDB cursor.
         n = 0
         for tweet in tweets:
             # Assign a tweet to a time slot
             result_tweet = self.generate_tweet_with_timeIndex(tweet)
+            # get account creation info
+            self.populate_account_creation_info(result_tweet)
             # Update all reports: e.g., gender distribution, user distribution, etc.
             self.populate_tweets(result_tweet)
             n += 1
