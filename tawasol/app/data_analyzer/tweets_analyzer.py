@@ -30,6 +30,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         #self.community_graph = {'nodes': [], 'links': []}
         #self.users_graph_links = set()
         self.start_time = datetime.utcnow()
+        self.users_profile = defaultdict(set)
 
     def process_tweet(self, tweet, users_dict):
         """
@@ -159,7 +160,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                 tweets_arr.append(tweet_text)
                 m_broken = tweet_text.split('@')
                 if len(m_broken) > 1:
-                    user = m_broken[1].split(' ')[0]
+                    user_ = m_broken[1].split(' ')[0]
+                    user = user_.replace(':', '')
                     if user:
                         mention = '@' + user
                         mentions.append(mention)
@@ -211,6 +213,9 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         # Used hashtags
         for hashtag in tweet.hashtags:
             self.hashtags[hashtag] += 1
+
+        # get users profile
+        #self.users_profile = []
 
         # add images
         # self.images += tweet.tweet_images

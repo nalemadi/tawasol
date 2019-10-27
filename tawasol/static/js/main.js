@@ -101,6 +101,12 @@ $(document).ready(function() {
             xAxis: {
                 categories: categories,
                 tickmarkPlacement: 'on',
+                labels: {
+                    rotation: 30,
+                    style: {
+            	        fontSize:'6pt'
+                    }
+            }
             },
             yAxis: {
                 min: 0,
@@ -168,7 +174,13 @@ $(document).ready(function() {
                 text: ''
             },
             xAxis: {
-                categories: categories
+                categories: categories,
+                labels: {
+                    rotation: 30,
+                    style: {
+            	        fontSize:'6pt'
+                    }
+            }
             },
             yAxis: {
                 title: {
@@ -233,7 +245,13 @@ $(document).ready(function() {
                 text: ''
             },
             xAxis: {
-                categories: categories
+                categories: categories,
+                labels: {
+                    rotation: 30,
+                    style: {
+            	        fontSize:'6pt'
+                    }
+            }
             },
             yAxis: {
                 title: {
