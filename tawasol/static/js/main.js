@@ -251,7 +251,7 @@ $(document).ready(function() {
                     style: {
             	        fontSize:'6pt'
                     }
-            }
+                }
             },
             yAxis: {
                 title: {
@@ -338,6 +338,56 @@ $(document).ready(function() {
         });*/
     }
 
+    function generate_account_creation_chart(data, categories) {
+        $('#account_creation').highcharts({
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                categories: categories,
+                title: { text: 'Age of Accounts' }
+            },
+            yAxis: {
+                title: { text: '# of Accounts' }
+            },
+            plotOptions: {
+                column: {
+                    groupPadding: 0,
+                    pointPadding: 0,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                data: data
+            }]
+        });
+    }
+
+    function generate_tweets_counter_chart(data, categories) {
+        $('#tweets_counter').highcharts({
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                categories: categories,
+                title: { text: 'Age of Accounts' }
+            },
+            yAxis: {
+                title: { text: '# of Tweets' }
+            },
+            plotOptions: {
+                column: {
+                    groupPadding: 0,
+                    pointPadding: 0,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                data: data
+            }]
+        });
+    }
+
     function generate_top_mentions(top_mentions) {
         $('#owl-top-mentions').jQCloud(top_mentions, {
             autoResize: true
@@ -380,6 +430,9 @@ $(document).ready(function() {
         generate_top_users(values.top_users);
         generate_top_mentions(values.top_mentions);
         generate_top_tweets(values.top_tweets);
+        var account_age_cat = values.account_age_cat;
+        generate_account_creation_chart(values.account_creation, account_age_cat);
+        generate_tweets_counter_chart(values.accounts_tweets_counter, account_age_cat);
     }
 
     function processMapTweets() {
