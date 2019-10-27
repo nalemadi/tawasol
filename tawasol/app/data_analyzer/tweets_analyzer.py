@@ -271,7 +271,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         :return:
         """
         self.time_slots = self.get_all_timeslots()
-        self.get_account_creation_range()
+        self.get_accounts_creation_ranges()
         # This is iterating over PyMongoDB cursor.
         n = 0
         for tweet in tweets:
