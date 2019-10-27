@@ -367,6 +367,7 @@ $(document).ready(function() {
                 }
             },
             series: [{
+                name: '# of Accounts',
                 data: data
             }]
         });
@@ -401,6 +402,7 @@ $(document).ready(function() {
                 }
             },
             series: [{
+                name: '# of Tweets',
                 data: data
             }]
         });
