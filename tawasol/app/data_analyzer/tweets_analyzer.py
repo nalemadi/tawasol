@@ -258,12 +258,14 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         creation_date = result_tweet.user_info['account_creation']
         tweets_count = result_tweet.user_info['tweets_count']
         user_id = result_tweet.user_info['user_id']
+        user_cat = dict()
         if user_id not in self.users_profile.keys():
             self.users_profile[user_id] = {'creation_date': creation_date,
                                                                  'tweets_count': tweets_count}
             cat = self.get_account_creation_cat(creation_date)
+            user_cat[user_id] = cat
             self.accounts_creation[cat] += 1
-            self.accounts_tweets_counter[cat] += tweets_count
+        self.accounts_tweets_counter[user_cat[user_id]] += 1
 
     def get_analyzed_tweets(self, tweets):
         """

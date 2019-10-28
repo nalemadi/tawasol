@@ -15,10 +15,13 @@ import subprocess
 from subprocess import PIPE
 
 
-def run_shell_script():
+def run_shell_script_restart_crawler():
 	#f = open('[REDACTED_FPATH]tawasol/cron.log', 'a')
 	subprocess.call('sh [REDACTED_FPATH]tawasol/tawasol_restart_crawler_process.sh', shell=True)
 
+
+def run_shell_script_restart_report():
+	subprocess.call('sh [REDACTED_FPATH]tawasol/tawasol_restart_report_generator_process.sh', shell=True)
 
 app = Flask(__name__)
 
@@ -115,6 +118,10 @@ def new_user():
 				db.session.add(user)
 				db.session.commit()
 				login_user(user)
+				## restart report generation when creating new user
+				# print 'account created ... restarting report generator'
+				# run_shell_script_restart_report()
+				# print 'restart is done'
 				return redirect(url_for('home'))
 			except AssertionError as error:
 				print 'assertion error', error
@@ -280,9 +287,10 @@ def crawling_settings():
 			accounts = get_all_accounts(user_email)
 
 			if is_changed:
-				# restarting the crawler if there is any change
-				print 'There are changes in Keywords/Accounts ... restarting the crawler'
-				run_shell_script()
+				# restarting the crawler and report generator if there is any change
+				print 'There are changes in Keywords/Accounts ... restarting the crawler and report generator'
+				run_shell_script_restart_crawler()
+				run_shell_script_restart_report()
 				print 'restart is done'
 
 			return render_template('crawling_settings.html', authenticated=True, current_username=current_username, user_keywords=keywords, user_accounts=accounts)
