@@ -120,10 +120,10 @@ def new_user():
                 db.session.add(user)
                 db.session.commit()
                 login_user(user)
-                ## restart report generation when creating new user
-                # print 'account created ... restarting report generator'
-                # run_shell_script_restart_report()
-                # print 'restart is done'
+                # restart report generation when creating new user
+                print 'account created ... restarting report generator'
+                run_shell_script_restart_report()
+                print 'restart is done'
                 return redirect(url_for('home'))
             except AssertionError as error:
                 print 'assertion error', error
