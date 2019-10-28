@@ -2,8 +2,8 @@ from flask import Flask, render_template, Response, redirect, url_for, request, 
 from flask_login import LoginManager, login_required, login_user, logout_user
 from tawasol_api.database import Users, Keywords, Accounts, Tokens, db
 from tawasol_api import pcrypt
-#from app import results_channels, REDIS_DB
-from tawasol_report_generator import results_channels, REDIS_DB
+from app import results_channels, REDIS_DB, REDIS_NAMESPACE, REDIS_CONFIG
+# from tawasol_report_generator import results_channels, REDIS_DB
 import json
 from flask_security.decorators import roles_required
 from flask_security import Security, SQLAlchemyUserDatastore
@@ -141,8 +141,10 @@ def get_info(user_id):
     if user_id:
         broken = user_id.split('@')
         user_name = broken[0].lower()
+        results_channels[user_name] = '%s:%s_%s' % (REDIS_NAMESPACE, REDIS_CONFIG['channels']['results'], user_name)
         #read from redis channel
         print 'current redis channel name:', results_channels[user_name]
+
         data = REDIS_DB.lrange(results_channels[user_name], 0, -1)[0]
         json_data = json.loads(data)
         return jsonify(json_data)
