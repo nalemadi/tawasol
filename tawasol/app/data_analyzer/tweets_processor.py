@@ -1,10 +1,9 @@
 from tweets_analyzer import TweetsAnalyzer
 from multiprocessing import Process
-
 import json
-
 import logging
 logging.getLogger().setLevel(logging.INFO)
+logging.basicConfig(filename='crawler.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 
 class TweetProcessor(Process):

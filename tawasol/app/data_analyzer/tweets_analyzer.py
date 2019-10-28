@@ -278,16 +278,11 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         n = 0
         for tweet in tweets:
             # Assign a tweet to a time slot
-            logging.info('generate_tweet_with_timeIndex')
             result_tweet = self.generate_tweet_with_timeIndex(tweet)
             # get account creation info
-            logging.info('populate_account_creation_info')
             self.populate_account_creation_info(result_tweet)
             # Update all reports: e.g., gender distribution, user distribution, etc.
-            logging.info('populate_account_creation_info')
             self.populate_tweets(result_tweet)
             n += 1
-        logging.info('get_tweets_summary_report')
         result = self.get_tweets_summary_report()
-        logging.info('DONE with get_tweets_summary_report')
         return result, n
