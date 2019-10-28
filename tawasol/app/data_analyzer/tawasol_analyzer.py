@@ -7,6 +7,8 @@ from ..data_analyzer.tweets_analyzer import TweetsAnalyzer
 from ..data_querier.time_querier import TimeQuerier
 from ..config.dashboard_config import TIME_GRANULARITY, TIME_COVERED
 
+logging.basicConfig(filename='reports.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+
 
 class TawasolAnalyzer(Thread):
 
