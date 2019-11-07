@@ -17,8 +17,10 @@ class Tweet():
 		self.created_at = tweet['created_at']
 		self.time_index = time_index
 
-		# if 'gender' in tweet:
-		# 	self.gender = tweet['gender']
+		if 'gender' in tweet:
+			self.gender = tweet['gender']
+		else:
+			self.gender = None
 		# else:
 		# 	# name
 		# 	names = tweet['user']['name'].split(' ')
@@ -26,7 +28,7 @@ class Tweet():
 		# 	if len(names) > 0:
 		# 		self.gender = genderizer.infer_gender(names[0])
 		# 	else:
-		self.gender = tweet['gender']
+		# 		self.gender = None
 
 		# name
 		self.names = tweet['user']['name'].split(' ')
