@@ -73,7 +73,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         names = tweet['user']['name'].split(' ')
         # gender
         if len(names) > 0:
-            tweet['gender'] = self.genderizer.infer_gender(names[0])
+            tweet['gender'] = genderizer.infer_gender(names[0])
 
         tweet_user = tweet['user']['screen_name']
         users_list = []
