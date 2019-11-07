@@ -1,12 +1,12 @@
-from time_analyzer import TimeAnalyzer
-from text_analyzer import TextAnalyzer
-from app.models.genderizer.genderizer_client import *
+# from time_analyzer import TimeAnalyzer
+# from text_analyzer import TextAnalyzer
+# from app.models.genderizer.genderizer_client import *
 
 
-# model to infer whether the user is male/female
-genderizer = Genderizer(male_fname='./data/male.txt', female_fname='./data/female.txt')
-text_analyzer = TextAnalyzer()
-time_analyzer = TimeAnalyzer()
+# # model to infer whether the user is male/female
+# genderizer = Genderizer(male_fname='./data/male.txt', female_fname='./data/female.txt')
+#text_analyzer = TextAnalyzer()
+#time_analyzer = TimeAnalyzer()
 
 
 class Tweet():
@@ -17,17 +17,16 @@ class Tweet():
 		self.created_at = tweet['created_at']
 		self.time_index = time_index
 
-		if 'gender' in tweet:
-			self.gender = tweet['gender']
-		else:
-			# name
-			names = tweet['user']['name'].split(' ')
-			# gender
-			if len(names) > 0:
-				self.gender = genderizer.infer_gender(names[0])
-			else:
-				self.gender = None
-
+		# if 'gender' in tweet:
+		# 	self.gender = tweet['gender']
+		# else:
+		# 	# name
+		# 	names = tweet['user']['name'].split(' ')
+		# 	# gender
+		# 	if len(names) > 0:
+		# 		self.gender = genderizer.infer_gender(names[0])
+		# 	else:
+		# 		self.gender = None
 
 		# name
 		self.names = tweet['user']['name'].split(' ')
@@ -36,7 +35,8 @@ class Tweet():
 		self.lang = tweet['lang']
 
 		# tweet text
-		#self.tweet_text = tweet['text']
+		self.tweet_text = tweet['text']
+
 		if 'retweeted_status' in tweet.keys():
 			if 'extended_tweet' in tweet['retweeted_status'].keys():
 				tweet_text = tweet['retweeted_status']['extended_tweet']['full_text']
@@ -50,46 +50,49 @@ class Tweet():
 		self.screen_name = tweet['user']['screen_name']
 
 		# sentiment
-		if 'sentiment' not in tweet.keys():
-			tweet['sentiment'] = text_analyzer.get_sentiment_sentistrength(tweet_text, tweet['lang'])
-			self.sentiment_score = tweet.get('sentiment', None)
-		else:
-			self.sentiment_score = tweet.get('sentiment', None)
+		# if 'sentiment' not in tweet.keys():
+		# 	tweet['sentiment'] = text_analyzer.get_sentiment_sentistrength(tweet_text, tweet['lang'])
+		# 	self.sentiment_score = tweet.get('sentiment', None)
+		# else:
+		self.sentiment_score = tweet['sentiment']
 
 		# hashtags
 		self.hashtags = [x.get(u'text') for x in tweet.get('entities').get('hashtags')]
 
 		# user profile
 		self.user_profile = {'frequency': 1, 'uid': self.tweet_id, 'user_bio': tweet['user']['description'], 'user_img': tweet['user']['profile_image_url'], 'user_name': self.screen_name}
-		self.user_info = {'user_id': tweet['user']['id_str'], 'account_creation':tweet['user']['created_at'], 'tweets_count': tweet['user']['statuses_count']}
+		self.user_info = {'user_id': tweet['user']['id_str'], 'account_creation':tweet['user']['created_at']}
+
+		# mentions
+		self.mentions = [x['screen_name'] for x in tweet['entities']['user_mentions']]
 
 		# tweet emotion
-		if 'emotion' not in tweet.keys():
-			tweet['emotion'] = text_analyzer.get_emotion(tweet_text, tweet['lang'])
-			self.emotion_score = tweet['emotion']
-		else:
-			self.emotion_score = tweet['emotion']
-
-		# list of mentioned users
-		self.lst_mentioned_usrs = text_analyzer.get_mentioned_users(tweet['text'])
-
-		# tweet emotion
+		# if 'emotion' not in tweet.keys():
+		# 	tweet['emotion'] = text_analyzer.get_emotion(tweet_text, tweet['lang'])
+		# 	self.emotion_score = tweet['emotion']
+		# else:
 		self.emotion_score = tweet['emotion']
 
+		# list of mentioned users
+		#self.lst_mentioned_usrs = text_analyzer.get_mentioned_users(tweet['text'])
+
+		# tweet emotion
+		#self.emotion_score = tweet['emotion']
+
 		# Get images
-		if tweet.get('entities',{}).get('media',None):
-			if tweet['coordinates'] is not None:
-				self.tweet_images = [t.get(u'media_url') for t in tweet.get('entities',{}).get('media',{})]
-			else:
-				self.tweet_images = []
-		else:
-			self.tweet_images = []
+		# if tweet.get('entities',{}).get('media',None):
+		# 	if tweet['coordinates'] is not None:
+		# 		self.tweet_images = [t.get(u'media_url') for t in tweet.get('entities',{}).get('media',{})]
+		# 	else:
+		# 		self.tweet_images = []
+		# else:
+		# 	self.tweet_images = []
 
 		# coordinates
-		if tweet['coordinates'] is not None:
-			if tweet['coordinates']['type'] == "Point":
-				#[longitude, latitude]
-				coordinates = tweet['coordinates']['coordinates']
-				self.tweet_coor = str(coordinates[0])+','+str(coordinates[1])
-		else:
-			self.tweet_coor = -1
+		# if tweet['coordinates'] is not None:
+		# 	if tweet['coordinates']['type'] == "Point":
+		# 		#[longitude, latitude]
+		# 		coordinates = tweet['coordinates']['coordinates']
+		# 		self.tweet_coor = str(coordinates[0])+','+str(coordinates[1])
+		# else:
+		# 	self.tweet_coor = -1

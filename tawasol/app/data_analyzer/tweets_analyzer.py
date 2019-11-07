@@ -8,22 +8,29 @@ from text_analyzer import TextAnalyzer
 from time_analyzer import TimeAnalyzer
 from pytz import timezone
 from ..utils.consts import langs_dict
+from app.models.genderizer.genderizer_client import *
 
 logging.getLogger().setLevel(logging.INFO)
+
+# model to infer whether the user is male/female
+genderizer = Genderizer(male_fname='./data/male.txt', female_fname='./data/female.txt')
 
 
 class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 
     def __init__(self):
         self.collection = None
-        self.categories = set()
+        self.time_indexes = set()
         self.time_slots = []
         self.users_distribution = defaultdict(set)
         self.tweets_distribution = defaultdict(set)
+        self.tweets_text = defaultdict(set)
         self.tweets_sentiment = defaultdict(lambda: defaultdict(int))
-        self.tweets_happiness = {}
+        self.tweets_happiness = defaultdict(set)
         self.language_distribution = defaultdict(int)
         self.hashtags = defaultdict(int)
+        self.mentions = defaultdict(int)
+        self.top_users = defaultdict(int)
         # self.images = []
         #self.users_graph_nodes = defaultdict()
         self.gender_distribution = {'female': 0, 'male': 0}
@@ -61,6 +68,12 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 
         # Convert datetime
         tweet['created_at'] = self.to_datetime(tweet['created_at']).replace(tzinfo=timezone('GMT'))
+
+        # name
+        names = tweet['user']['name'].split(' ')
+        # gender
+        if len(names) > 0:
+            tweet['gender'] = self.genderizer.infer_gender(names[0])
 
         tweet_user = tweet['user']['screen_name']
         users_list = []
@@ -107,28 +120,40 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         result = dict()
 
         # Categories
-        result['categories'] = sorted(self.categories)
+        result['categories'] = sorted(self.time_indexes)
 
         # Tweets Sentiment
-        result['positive'] = [self.tweets_sentiment[x].get('positive', 0) for x in self.categories]
-        result['negative'] = [self.tweets_sentiment[x].get('negative', 0) for x in self.categories]
-        result['neutral'] = [self.tweets_sentiment[x].get('neutral', 0) for x in self.categories]
+        result['positive'] = [self.tweets_sentiment[x].get('positive', 0) for x in self.time_indexes]
+        result['negative'] = [self.tweets_sentiment[x].get('negative', 0) for x in self.time_indexes]
+        result['neutral'] = [self.tweets_sentiment[x].get('neutral', 0) for x in self.time_indexes]
 
         # Nbr of tweets/users
-        result['nbr_users'] = sum([len(list(self.users_distribution[x])) for x in self.categories])
-        result['nbr_tweets'] = sum([len(list(self.tweets_distribution[x])) for x in self.categories])
+        result['nbr_users'] = sum([len(list(self.users_distribution[x])) for x in self.time_indexes])
+        result['nbr_tweets'] = sum([len(list(self.tweets_distribution[x])) for x in self.time_indexes])
 
         # Happiness Chart
-        result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang='en') for x in self.categories]
+        #result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang='en') for x in self.time_indexes]
+        result['happiness'] = [self.tweets_happiness[x] for x in self.time_indexes]
 
         # Users Chart
-        result['users'] = [len(list(self.users_distribution[x])) for x in self.categories]
+        result['users'] = [len(list(self.users_distribution[x])) for x in self.time_indexes]
 
         # Hashtags Chart
         users_hashtags = [{'text': hashtag, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/hashtag/', hashtag), 'target': '_blank'}} for hashtag, freq in self.hashtags.iteritems()]
         result['hashtags'] = sorted(users_hashtags, key=lambda x:x['weight'], reverse=True)[:NBR_HAHSTAGS]
 
-        # # Language
+        users_count = [{'text': username, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', username), 'target': '_blank', 'title': 'This user tweeted %s times' % (freq)}} for username, freq in self.top_users.iteritems()]
+        result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:20]
+
+        # Mentions tagCloud
+        top_mentions = [{'text': mention, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', mention),'target': '_blank', 'title': 'This user is mentioned %s times' % (freq)}} for mention, freq in self.mentions.iteritems()]
+        result['top_mentions'] = sorted(top_mentions, key=lambda x: x['weight'], reverse=True)[:20]
+
+        result['account_age_cat'] = self.account_age_cat
+        result['account_creation'] = [self.accounts_creation[y] for y in self.account_age_cat]
+        result['accounts_tweets_counter'] = [self.accounts_tweets_counter[y] for y in self.account_age_cat]
+
+        # Language
         lst_lang = [[langs_dict.get(k,k),v] for k,v in self.language_distribution.items()]
         result['language'] = self.get_language_dist(lst_lang)
 
@@ -155,47 +180,22 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         if len(result['tweets']) is not 0:
             # [tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S'), str(tweet.tweet_coor)]
             tweets = result['tweets']
-            users = []
             tweets_arr = []
-            mentions = []
             for tweet in tweets:
                 broken = tweet.split('-- ')
                 tweet_text = broken[0]
                 tweets_arr.append(tweet_text)
-                m_broken = tweet_text.split('@')
-                if len(m_broken) > 1:
-                    user_ = m_broken[1].split(' ')[0]
-                    user = user_.replace(':', '')
-                    if user:
-                        mention = '@' + user
-                        mentions.append(mention)
-
-                userscreen = broken[1].split('\n')[0]
-                #print '===userscreen==', userscreen
-                if userscreen.startswith('@'):
-                    users.append(userscreen)
-            #
-            counter_users = Counter(users)
-            users_count = [{'text': username, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', username.split('@')[1]), 'target':'_blank', 'title':'This user tweeted %s times'%(freq)}} for username, freq in counter_users.iteritems()]
-            result['top_users'] = sorted(users_count, key=lambda x: x['weight'], reverse=True)[:20]
-            ###
-            counter_mentions = Counter(mentions)
-            mentions_count = [{'text': mention, 'weight': freq, 'link': {'href': '%s%s' % ('https://twitter.com/', mention.split('@')[1]), 'target': '_blank', 'title':'This user is mentioned %s times'%(freq)}} for mention, freq in counter_mentions.iteritems()]
-            result['top_mentions'] = sorted(mentions_count, key=lambda x: x['weight'], reverse=True)[:20]
             ###
             counter_tweets = Counter(tweets_arr)
             tweets_count = [{'text': tweet_txt, 'weight': freq} for tweet_txt, freq in counter_tweets.iteritems()]
             result['top_tweets'] = sorted(tweets_count, key=lambda x:x['weight'], reverse=True)[:20]
             ###
-            result['account_age_cat'] = self.account_age_cat
-            result['account_creation'] = [self.accounts_creation[y] for y in self.account_age_cat]
-            result['accounts_tweets_counter'] = [self.accounts_tweets_counter[y] for y in self.account_age_cat]
 
         return result
 
     def populate_tweets(self, tweet):
         # time_index
-        self.categories.add(tweet.time_index)
+        self.time_indexes.add(tweet.time_index)
 
         # Gender
         if tweet.gender is not None:
@@ -209,6 +209,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 
         # User distribution
         self.users_distribution[tweet.time_index].add(tweet.screen_name)
+        self.top_users[tweet.screen_name] +=1
 
         # Tweet distribution
         is_string = isinstance(tweet.created_at, basestring)
@@ -216,14 +217,16 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             tweet_date = self.to_datetime(tweet.created_at)
         else:
             tweet_date = tweet.created_at
-        self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S'), str(tweet.tweet_coor)]))
+        self.tweets_distribution[tweet.time_index].add('\n'.join([tweet.tweet_text, '-- @' + tweet.screen_name, tweet_date.strftime('%Y-%m-%dT%H:%M:%S')]))
 
+        self.tweets_happiness[tweet.time_index].add(tweet.emotion_score)
         # Used hashtags
         for hashtag in tweet.hashtags:
             self.hashtags[hashtag] += 1
 
-        # get users profile
-        #self.users_profile = []
+        # user mentions
+        for mention in tweet.mentions:
+            self.mentions[mention] += 1
 
         # add images
         # self.images += tweet.tweet_images
@@ -257,14 +260,13 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
 
     def populate_account_creation_info(self, result_tweet):
         creation_date = result_tweet.user_info['account_creation']
-        tweets_count = result_tweet.user_info['tweets_count']
         user_id = result_tweet.user_info['user_id']
         if user_id not in self.users_profile.keys():
-            self.users_profile[user_id] = {'creation_date': creation_date,
-                                                                 'tweets_count': tweets_count}
+            self.users_profile[user_id] = {'creation_date': creation_date}
             cat = self.get_account_creation_cat(creation_date)
             self.user_cat[user_id] = cat
             self.accounts_creation[cat] += 1
+
         self.accounts_tweets_counter[self.user_cat[user_id]] += 1
 
     def get_analyzed_tweets(self, tweets):
@@ -279,10 +281,13 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         for tweet in tweets:
             # Assign a tweet to a time slot
             result_tweet = self.generate_tweet_with_timeIndex(tweet)
+
             # get account creation info
             self.populate_account_creation_info(result_tweet)
+
             # Update all reports: e.g., gender distribution, user distribution, etc.
             self.populate_tweets(result_tweet)
             n += 1
+
         result = self.get_tweets_summary_report()
         return result, n

@@ -567,6 +567,6 @@ $(document).ready(function() {
         var user_email = user_data.name;
         console.log(user_email);
         generate_charts(user_email);
-        generate_map();
+        //generate_map();
     }
 });

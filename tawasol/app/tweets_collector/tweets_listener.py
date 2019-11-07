@@ -11,13 +11,13 @@ class TweetsListener(StreamListener):
         super(StreamListener, self).__init__()
 
         self.redis_db = redis_db
-        self.redis_channel = tweets_channel
+        self.tweets_channel = tweets_channel
 
     def on_data(self, data):
         try:
             tweet = json.loads(data)
             if tweet['text']:
-                self.redis_db.rpush(self.redis_channel, json.dumps(tweet))
+                self.redis_db.rpush(self.tweets_channel, json.dumps(tweet))
         except Exception, e:
             pass
 
