@@ -26,7 +26,7 @@ class Tweet():
 		# 	if len(names) > 0:
 		# 		self.gender = genderizer.infer_gender(names[0])
 		# 	else:
-		# 		self.gender = None
+		self.gender = tweet['gender']
 
 		# name
 		self.names = tweet['user']['name'].split(' ')
