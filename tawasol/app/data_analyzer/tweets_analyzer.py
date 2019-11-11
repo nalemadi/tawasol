@@ -132,8 +132,8 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         result['nbr_tweets'] = sum([len(list(self.tweets_distribution[x])) for x in self.time_indexes])
 
         # Happiness Chart
-        #result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang='en') for x in self.time_indexes]
-        result['happiness'] = [self.tweets_happiness[x] for x in self.time_indexes]
+        result['happiness'] = [self.get_emotion(' '.join(list(self.tweets_distribution[x])), lang='en') for x in self.time_indexes]
+        #result['happiness'] = [self.tweets_happiness[x] for x in self.time_indexes]
 
         # Users Chart
         result['users'] = [len(list(self.users_distribution[x])) for x in self.time_indexes]
