@@ -62,7 +62,7 @@ class TweetProcessor(Process):
 							# 		logging.info('tweet is inserted into: %s - %s . tweet: %s' % (collection, tawasol_user, processed_tweet['text']))
 					else:
 						self.undefined_tweets_collection.insert_one(processed_tweet)
-						logging.info('tweet is inserted into Undefined collection: %s' % processed_tweet['text'])
+						logging.info('NULL tawasol users, inserted into Undefined collection: %s' % processed_tweet['text'])
 			except Exception as e:
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass
