@@ -1,5 +1,6 @@
 from database_manager.MongoDB_Manager import mongoDB_manager
 from database_manager.SqliteManager import SqliteManager
+from collections import defaultdict
 import redis
 import yaml
 import os
@@ -31,6 +32,8 @@ tweets_channel = '%s:%s' % (REDIS_NAMESPACE, REDIS_CONFIG['channels']['tweets'])
 ##
 results_channels = {}
 users = []
+keywords_dict = defaultdict(set)
+accounts_dict = defaultdict(set)
 for key, value in users_dict.iteritems():
 	key_broken = key.split('@')
 	user_name = key_broken[0].lower()
@@ -50,9 +53,13 @@ for key, value in users_dict.iteritems():
 	user_accounts = value['accounts']
 	if user_keywords:
 		keywords += value['keywords']
+		for ke in keywords:
+			keywords_dict[ke].add(user_name)
 
 	if user_accounts:
 		accounts += value['accounts']
+		for ac in accounts:
+			accounts_dict[ac].add(user_name)
 
 keywords = list(set([_.strip().lower() for _ in keywords if len(_.strip()) > 1]))
 accounts = list(set([_.strip().lower() for _ in accounts if len(_.strip()) > 1]))

@@ -8,7 +8,7 @@ logging.basicConfig(filename='crawler.log', filemode='w', format='%(name)s - %(l
 
 class TweetProcessor(Process):
 
-	def __init__(self, redis_db, tweets_channel, results_channels, tweets_collection_dict, users_dict):
+	def __init__(self, redis_db, tweets_channel, results_channels, tweets_collection_dict, users_dict, keywords_dict, accounts_dict):
 		super(TweetProcessor, self).__init__()
 
 		self.tweets_collection_dict = tweets_collection_dict
@@ -20,6 +20,8 @@ class TweetProcessor(Process):
 		self.undefined_tweets_collection = tweets_collection_dict['undefined']
 		##
 		self.users_dict = users_dict
+		self.k_dict = keywords_dict
+		self.acc_dict = accounts_dict
 
 		# redis channel
 		self.redis_db = redis_db
@@ -37,7 +39,7 @@ class TweetProcessor(Process):
 					#logging.info(json.dumps(tweet, ensure_ascii=False).encode('utf8'))
 
 					_tweet = json.loads(tweet)
-					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
+					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict, self.k_dict, self.acc_dict)
 					processed_tweet = processed_info[0]
 					tawasol_users = processed_info[1]
 					if tawasol_users:

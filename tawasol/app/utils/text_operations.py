@@ -1,5 +1,6 @@
 #coding=utf-8
 import re
+import unicodedata as ud
 import logging
 
 
@@ -24,11 +25,10 @@ def simple_clean_text_ar(text):
 	#print '1:', text
 	#[ ^\u0600 -\u06FF]+
 	# r'\w+]'
-	text = re.sub(r'[\u0600 -\u06FF]+', '', text)
+	#text = re.sub(r'[\u0600 -\u06FF]+', '', text)
+	text = ''.join(c for c in text if not ud.category(c).startswith('P'))
 	#print '2:', text.strip()
 	text_broken = text.lower().strip().split(' ')
 	#en_stops = set(stopwords.words('english'))
 	#text = ' '.join(ch for ch in text_broken if ch not in en_stops)
-	#text = text.lower()
-	#txt_arr = text.split(' ')
 	return text_broken
