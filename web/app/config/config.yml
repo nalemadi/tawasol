@@ -1,0 +1,20 @@
+prod:
+        redis:
+                host: 'localhost'
+                port: [REDACTED_VALUE]
+                hostname: tawasol_prod
+                channels:
+                        tweets: tweets
+                        results: results_prod
+        sqlite:
+                db_name: 'tawasol.sqlite'
+dev:
+        redis:
+                host: 'localhost'
+                port: [REDACTED_VALUE]
+                hostname: tawasol_dev
+                channels:
+                        tweets: tweets
+                        results: results_dev
+        sqlite:
+                db_name: 'tawasol_dev.sqlite'

@@ -1,0 +1,29 @@
+<!-- Fixed navbar -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            {% if authenticated %}
+                <a class="navbar-brand" href="/home"><a class="navbar-brand" href="/home"><img src="./static/img/logo.png" alt="" class="d-inline align-top" width="30" height="30" style="display:inline; vertical-align:top;">Tawasol</a>
+            {% else %}
+                <a class="navbar-brand" href="/"><a class="navbar-brand" href="/home"><img src="./static/img/logo.png" alt="" class="d-inline align-top" width="30" height="30" style="display:inline; vertical-align:top;">Tawasol</a>
+            {% endif%}
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if authenticated %}
+                    <li><a href="/home">Dashboard</a></li>
+                    <li><a href="/profile">{{current_username}}</a></li>
+                    <li><a href="/crawling_settings"><span id="crawling_settings">Settings</span></a></li>
+{#                    <li><a href="/profile"><span id="profile">Profile</span></a></li>#}
+                    <li><a href="/logout"><span id="logout">Logout</span></a></li>
+                {% else %}
+                    <li><a href="/"><span id="login">Login</span></a></li>
+                {% endif%}
+            </ul>
+        </div>
+    </div>
+</nav>

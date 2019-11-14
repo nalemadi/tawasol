@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block body %}
+{% include "navbar.html" %}
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-lg-3" style="max-width:270px">
+                <img src="./static/img/logo.png" class="img-thumbnail" alt="Tawasol logo" style="background-color:transparent;width:75%">
+            </div>
+            <div class="col-lg-8">
+            <!--<div class="jumbotron">-->
+                <h1>TAWASOL</h1>
+                <p>The objective of TAWASOL is to build an innovative social listening platform that collects users’ post from different social media channels and strives to understand what people are saying toward different topics such as public transport and sport events. <br>
+                    This Dashboard is developed by <a href="http://qcri.qa" target='_blank'>@QCRI.</a></p>
+            </div>
+{#            <div class="col-lg-3">#}
+{#                <div class="panel panel-info">#}
+{#                    <div class="panel-heading">#}
+{#                        <h3 align="center">Active Users</h3>#}
+{#                        <h3 align="center">{{ total_users }}</h3>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            {% include "login.html" %}#}
+        </div>
+    </div>
+    {% include "login.html" %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block body %}
+{% include "navbar.html" %}
+    <div class="row" style="margin-top:5%;">
+        <div class="col-lg-4 col-lg-offset-4">
+            <h1>Create new user</h1>
+            <form action="" method="POST" role="form">
+                <div class="form-group">
+                    <label for="newEmail">Email</label>
+                    <input type="email" class="form-control" name="email" id="newEmail" aria-describedby="emailHelp" placeholder="Enter email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputName">Username</label>
+                    <input type="username" class="form-control" name="username" id="inputName" placeholder="Enter username" pattern="[A-Za-z0-9]+" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" name="password" id="inputPassword" placeholder="Enter Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
+{#                    <input type="password" name="pw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">#}
+                </div>
+                <div class="form-group">
+                    <label for="inputReenterPassword">Re-enter Password</label>
+                    <input type="password" class="form-control" name="repassword" id="inputReenterPassword" placeholder="Re-enter Password" required>
+                    {% with messages = get_flashed_messages(category_filter=["wrong_password", "user_exist"]) %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="aler alert-danger">{{message}}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <button type="submit" class="btn btn-success">Create New Users</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

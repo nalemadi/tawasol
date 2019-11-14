@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+{% include "navbar.html" %}
+    <div class="row" style="margin-top:5%;">
+        <div class="col-lg-6 col-lg-offset-4">
+            <h1>Your session has been expired</h1>
+            <h4>Please request <a href="/forgot_password"><span id="forgot_password">forgot password</span></a> again.</h4>
+        </div>
+    </div>
+{% endblock %}
