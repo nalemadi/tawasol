@@ -23,8 +23,8 @@ print tweets_collections_dict
 # print json.dumps(users_dict, ensure_ascii=False).encode('utf8')
 # print tweets_channel
 # print REDIS_DB
-print 'key_dict', json.dumps(keywords_dict, ensure_ascii=False).encode('utf8')
-print 'acc_dict', json.dumps(accounts_dict, ensure_ascii=False).encode('utf8')
+print 'key_dict', keywords_dict
+print 'acc_dict', accounts_dict
 
 proxy_index = -4
 proxies_list = qcri_proxies
