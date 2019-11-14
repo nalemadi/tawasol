@@ -39,8 +39,8 @@ class Tweet():
 		# tweet text
 		self.tweet_text = tweet['text']
 
-		if 'retweeted_status' in tweet.keys():
-			if 'extended_tweet' in tweet['retweeted_status'].keys():
+		if 'retweeted_status' in tweet:
+			if 'extended_tweet' in tweet['retweeted_status']:
 				tweet_text = tweet['retweeted_status']['extended_tweet']['full_text']
 			else:
 				tweet_text = tweet['text']

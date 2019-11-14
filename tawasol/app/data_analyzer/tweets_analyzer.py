@@ -51,7 +51,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         """
         logging.info('=== TweetsAnalyzer: process tweet ===')
         if 'retweeted_status' in tweet:
-            if 'extended_tweet' in tweet['retweeted_status'].keys():
+            if 'extended_tweet' in tweet['retweeted_status']:
                 tweet_text = tweet['retweeted_status']['extended_tweet']['full_text']
             else:
                 tweet_text = tweet['text']
@@ -181,7 +181,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         # result['community_graph'] = {'nodes': self.users_graph_nodes, 'links': []}
 
         try:
-            if len(self.tweets_distribution.keys()) > 0:
+            if self.tweets_distribution.keys():
                 result['tweets'] = [tweet for tweet in self.tweets_distribution[max(self.tweets_distribution.keys())]] # [(-1)*NBR_TWEETS:]
             else:
                 result['tweets'] = []
@@ -275,7 +275,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
     def populate_account_creation_info(self, result_tweet):
         creation_date = result_tweet.user_info['account_creation']
         user_id = result_tweet.user_info['user_id']
-        if user_id not in self.users_profile.keys():
+        if user_id not in self.users_profile:
             self.users_profile[user_id] = {'creation_date': creation_date}
             cat = self.get_account_creation_cat(creation_date)
             self.user_cat[user_id] = cat
