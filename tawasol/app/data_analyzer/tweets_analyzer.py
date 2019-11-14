@@ -49,7 +49,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         :param tweet:
         :return: tweet object with extra info
         """
-        logging.info('=== TweetsAnalyzer: process tweet ===')
+        #logging.info('=== TweetsAnalyzer: process tweet ===')
         if 'retweeted_status' in tweet:
             if 'extended_tweet' in tweet['retweeted_status']:
                 tweet_text = tweet['retweeted_status']['extended_tweet']['full_text']
@@ -76,35 +76,35 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
             tweet['gender'] = genderizer.infer_gender(names[0])
 
         tweet_user = tweet['user']['screen_name']
-        # users_set = set()
-        #
-        # for t in tweet_text_broken:
-        #     if t in k_dict:
-        #         users_set = users_set|k_dict[t]
-        #
-        # if tweet_user.lower() in ac_dict:
-        #     users_set = users_set|ac_dict[tweet_user.lower()]
-        #
-        # users_list = list(users_set)
-        #
-        # logging.info('tweet belong to user(s): {}'.format(users_list))
-        users_list = []
-        for key, value in users_dict.iteritems():
-            key_broken = key.split('@')
-            user_name = key_broken[0]
+        users_set = set()
 
-            keywords = value['keywords']
-            for keyword in keywords:
-                if keyword in tweet_text_broken:
-                    logging.info('keyword found: {} in tweet_text for {}'.format(keyword, user_name))
-                    users_list.append(user_name)
+        for t in tweet_text_broken:
+            if t in k_dict:
+                users_set = users_set|k_dict[t]
 
-            #check accounts
-            accounts = value['accounts']
-            for account in accounts:
-                if account.lower() == tweet_user.lower():
-                    logging.info('account found for: %s' % user_name)
-                    users_list.append(user_name)
+        if tweet_user.lower() in ac_dict:
+            users_set = users_set|ac_dict[tweet_user.lower()]
+
+        users_list = list(users_set)
+
+        logging.info('tweet {} belong to user(s): {}'.format(tweet_text_broken, users_list))
+        # users_list = []
+        # for key, value in users_dict.iteritems():
+        #     key_broken = key.split('@')
+        #     user_name = key_broken[0]
+        #
+        #     keywords = value['keywords']
+        #     for keyword in keywords:
+        #         if keyword in tweet_text_broken:
+        #             logging.info('keyword found: {} in tweet_text for {}'.format(keyword, user_name))
+        #             users_list.append(user_name)
+        #
+        #     #check accounts
+        #     accounts = value['accounts']
+        #     for account in accounts:
+        #         if account.lower() == tweet_user.lower():
+        #             logging.info('account found for: %s' % user_name)
+        #             users_list.append(user_name)
 
         return tweet, users_list
 
