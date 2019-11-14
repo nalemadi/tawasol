@@ -52,14 +52,16 @@ for key, value in users_dict.iteritems():
 	user_keywords = value['keywords']
 	user_accounts = value['accounts']
 	if user_keywords:
+		for uk in user_keywords:
+			keywords_dict[uk].add(user_name)
+
 		keywords += value['keywords']
-		for ke in keywords:
-			keywords_dict[ke].add(user_name)
+
 
 	if user_accounts:
-		accounts += value['accounts']
-		for ac in accounts:
+		for ac in user_accounts:
 			accounts_dict[ac].add(user_name)
+		accounts += value['accounts']
 
 keywords = list(set([_.strip().lower() for _ in keywords if len(_.strip()) > 1]))
 accounts = list(set([_.strip().lower() for _ in accounts if len(_.strip()) > 1]))
