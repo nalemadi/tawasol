@@ -50,7 +50,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         :return: tweet object with extra info
         """
         logging.info('=== TweetsAnalyzer: process tweet ===')
-        if 'retweeted_status' in tweet.keys():
+        if 'retweeted_status' in tweet:
             if 'extended_tweet' in tweet['retweeted_status'].keys():
                 tweet_text = tweet['retweeted_status']['extended_tweet']['full_text']
             else:
@@ -72,7 +72,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         # name
         names = tweet['user']['name'].split(' ')
         # gender
-        if len(names) > 0:
+        if names:
             tweet['gender'] = genderizer.infer_gender(names[0])
 
         tweet_user = tweet['user']['screen_name']
@@ -86,6 +86,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                 if keyword in tweet_text_broken:
                     logging.info('keyword found: {} in tweet_text for {}'.format(keyword, user_name))
                     users_list.append(user_name)
+                    break
 
             #check accounts
             accounts = value['accounts']
@@ -93,6 +94,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
                 if account.lower() == tweet_user.lower():
                     logging.info('account found for: %s' % user_name)
                     users_list.append(user_name)
+                    break
 
         return tweet, users_list
 

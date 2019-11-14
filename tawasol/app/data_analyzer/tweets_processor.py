@@ -40,10 +40,10 @@ class TweetProcessor(Process):
 					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
 					processed_tweet = processed_info[0]
 					tawasol_users = processed_info[1]
-					if len(tawasol_users) > 0:
+					if tawasol_users:
 						for tawasol_user in tawasol_users:
 							tawasol_user = tawasol_user.lower()
-							if tawasol_user in self.tweets_collection_dict.keys():
+							if tawasol_user in self.tweets_collection_dict:
 								tweet_collection = self.tweets_collection_dict[tawasol_user]
 								tweet_collection.insert_one(processed_tweet)
 								logging.info('tweet is inserted into: %s . tweet: %s' % (tawasol_user, processed_tweet['text']))
