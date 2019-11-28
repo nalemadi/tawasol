@@ -1,4 +1,4 @@
-from tweets_analyzer import TweetsAnalyzer
+from tweets_annotator import TweetsAnnotator
 from multiprocessing import Process
 import json
 import logging
@@ -20,7 +20,7 @@ class TweetProcessor(Process):
 		self.redis_db = redis_db
 		self.tweets_channel = tweets_channel
 		self.results_channel = results_channels
-		self.tweetsAnalyzer = TweetsAnalyzer()
+		self.tweets_annotator = TweetsAnnotator()
 
 	def run(self):
 		while True:
@@ -30,16 +30,16 @@ class TweetProcessor(Process):
 					tweet = self.redis_db.lpop(self.tweets_channel)
 					#logging.info(json.dumps(tweet, ensure_ascii=False).encode('utf8'))
 
-					_tweet = json.loads(tweet)
-					processed_info = self.tweetsAnalyzer.process_tweet(_tweet, self.users_dict)
-					processed_tweet = processed_info[0]
-					tawasol_users = processed_info[1]
-                    # TODO: Noora, we should make sure all tweets captured are
-                    # relevant. No need to store extra tweets.
-                    for tawasol_user in tawasol_users:
-                        tweet_collection = self.tweets_collection_dict[tawasol_user.lower()]
-                        tweet_collection.insert_one(processed_tweet)
-                        logging.info('tweet is inserted into: %s . tweet: %s' % (tawasol_user, processed_tweet['text']))
+					raw_tweet = json.loads(tweet)
+					proc_result = self.tweets_annotator.annotate_tweet(raw_tweet, self.users_dict)
+					processed_tweet = proc_result[0]
+					tawasol_users = proc_result[1]
+					# TODO: Noora, we should make sure all tweets captured are relevant. No need to store extra tweets.
+					for tawasol_user in tawasol_users:
+						tweet_collection = self.tweets_collection_dict[tawasol_user.lower()]
+						tweet_collection.insert_one(processed_tweet)
+						logging.info('tweet is inserted into: %s . tweet: %s' % (tawasol_user, processed_tweet['text']))
 			except Exception as e:
+				print 'TweetProcessor: tweets processor error', e
 				logging.info('TweetProcessor: tweets processor error: %s' % e)
 				pass

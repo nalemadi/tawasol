@@ -1,50 +1,75 @@
-import tweepy
-from tweepy import OAuthHandler, Stream
-from tweets_listener import TweetsListener
+from tweepy import OAuthHandler, Stream, TweepError, API
+from tweepy.streaming import StreamListener
+import json
+import datetime
+import time
 import logging
-from .. import sqlite_manager
-
 
 logger = logging.getLogger(__name__)
 __author__ = 'noora'
 
 
-def get_accounts(api, accounts):
-    """
-    Return the IDs of a given list of screen_names.
-    """
-	users_ids = []
-	for account in accounts:
+class TweetsCollector(StreamListener):
+
+	def __init__(self, redis_db, tweets_channel, twitter_key, accounts, hashtags):
+		super(StreamListener, self).__init__()
+		self.redis_db = redis_db
+		self.tweets_channel = tweets_channel
+		self.twitter_key = twitter_key
+		self.accounts = accounts
+		self.hashtags = hashtags
+		self.tweets_collector()
+
+	def on_data(self, data):
 		try:
-			user = api.get_user(screen_name=account)
-			if user:
-				users_ids.append(str(user.id))
-		except tweepy.TweepError as e:
-			logging.info('Exception: tweets_collector: {} account: {}'.format(e, account))
+			tweet = json.loads(data)
+			if tweet['text']:
+				self.redis_db.rpush(self.tweets_channel, json.dumps(tweet))
+		except Exception as e:
 			pass
-	users_accounts = users_ids
-	return users_accounts
 
+	def on_error(self, status):
+		logging.warn('Error in twitter listener, status: %s' % status)
+		if status == 420:
+			logging.info('Rate Limit!! ... sleep from 15 minutes, %s' % datetime.datetime.now())
+			time.sleep(900)  # 15 minutes
 
-def tweets_collector(twitter_key, hashtags, accounts, redis_db, tweets_channel):
-	"""
+	def get_accounts(self):
+		"""
+		Return the IDs of a given list of screen_names.
+		"""
+		users_ids = []
+		for account in self.accounts:
+			try:
+				user = self.api.get_user(screen_name=account)
+				if user:
+					users_ids.append(str(user.id))
+			except TweepError as e:
+				logging.info('Exception: tweets_collector: {} account: {}'.format(e, account))
+				pass
+		users_accounts = users_ids
+		return users_accounts
+
+	def tweets_collector(self):
+		"""
 		Listens for ever for tweets about hashtags in keywords and accounts in accounts. Write these tweets to Redis Channel.
 		:return: Tweets matching some keywords
-	"""
-	logging.info('Start tweets collector')
-	auth = OAuthHandler(twitter_key['consumer_key'], twitter_key['consumer_secret'])
-	auth.set_access_token(twitter_key['access_token'], twitter_key['access_token_secret'])
-	api = tweepy.API(auth)
+		"""
+		logging.info('Start tweets collector')
+		auth = OAuthHandler(self.twitter_key['consumer_key'], self.twitter_key['consumer_secret'])
+		auth.set_access_token(self.twitter_key['access_token'], self.twitter_key['access_token_secret'])
+		#self.api = API(auth)
 
-	users_accounts = get_accounts(api, accounts)
+		#users_accounts = self.get_accounts()
+		users_accounts = []
 
-	while True:
-		logger.warning('Reconnecting to twitter stream after disconnection.')
-		try:
-			stream_listener = TweetsListener(redis_db, tweets_channel)
-			stream = Stream(auth, stream_listener)
-			stream.filter(track=hashtags, follow=users_accounts)
+		while True:
+			logger.warning('Reconnecting to twitter stream after disconnection.')
+			try:
+				#stream_listener = TweetsCollector(self.redis_db, self.tweets_channel)
+				stream = Stream(auth, self)
+				stream.filter(track=self.hashtags, follow=users_accounts)
 
-		except Exception as e:
-			logging.warn('Something went wrong with the listener, the exception is %s' % e)
-			continue
+			except Exception as e:
+				logging.warn('Something went wrong with the listener, the exception is %s' % e)
+				continue

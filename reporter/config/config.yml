@@ -1,0 +1,49 @@
+prod:
+        mongo:
+                host: '[REDACTED_IP]'
+                port: [REDACTED_PORT]
+                db_name: 'tawasol'
+                tweets_collection: 'tweets'
+        sqlite:
+                db_name: 'tawasol.sqlite'
+        redis:
+                host: 'localhost'
+                port: [REDACTED_VALUE]
+                hostname: tawasol_prod
+                channels:
+                        tweets: tweets
+                        results: results_prod
+        twitter:
+                consumer_key: '[REDACTED_CONSUMER_KEY]'
+                consumer_secret: '[REDACTED_CONSUMER_SECRET]'
+                access_token: '[REDACTED_ACCESS_TOKEN]'
+                access_token_secret: '[REDACTED_ACCESS_TOKEN_SECRET]'
+        proxy:
+                twitter_proxy: '[REDACTED_PROXYADD][REDACTED_VALUE]:[REDACTED_VALUE]'
+dev:
+        mongo:
+                host: '[REDACTED_VALUE]'
+                port: [REDACTED_PORT]
+                db_name: 'tawasol_dev'
+                tweets_collection: 'tweets'
+        sqlite:
+                db_name: 'tawasol_dev.sqlite'
+        redis:
+                host: 'localhost'
+                port: [REDACTED_VALUE]
+                hostname: tawasol_dev
+                channels:
+                        tweets: tweets
+                        results: results_dev
+        twitter:
+#                consumer_key: '[REDACTED_CONSUMER_KEY]'
+#                consumer_secret: '[REDACTED_CONSUMER_SECRET]'
+#                access_token: '[REDACTED_ACCESS_TOKEN]'
+#                access_token_secret: '[REDACTED_ACCESS_TOKEN_SECRET]'
+                consumer_key: '[REDACTED_CONSUMER_KEY]'
+                consumer_secret: '[REDACTED_CONSUMER_SECRET]'
+                access_token: '[REDACTED_ACCESS_TOKEN]'
+                access_token_secret: '[REDACTED_ACCESS_TOKEN_SECRET]'
+        proxy:
+                twitter_proxy: '[REDACTED_PROXYADD]209.73.134.21:[REDACTED_VALUE]'
+

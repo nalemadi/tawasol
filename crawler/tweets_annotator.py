@@ -25,7 +25,7 @@ class TweetsAnnotator:
     def __init__(self):
         pass
 
-    def process_tweet(self, tweet, users_dict):
+    def annotate_tweet(self, tweet, users_dict):
         """
         It parses a tweet and generated a set of new attributes related to
         sentiment, gender, etc. It also returns the list of users for this
@@ -37,7 +37,6 @@ class TweetsAnnotator:
         this tweet.
         """
 
-        logging.info('=== TweetsAnalyzer: process tweet ===')
         # TODO: Noora, why are we doing this for tweets with retweeted_status only?
         # to get full text of retweeted tweet
         if 'retweeted_status' in tweet:
@@ -52,6 +51,7 @@ class TweetsAnnotator:
         tweet_text_arr = self.get_clean_text_list(tweet_text, tweet['lang'])
 
         # Convert datetime
+        # TODO: remove GMT
         tweet['created_at'] = self.to_datetime(tweet['created_at']).replace(tzinfo=timezone('GMT'))
         
         # Sentiment/emotion

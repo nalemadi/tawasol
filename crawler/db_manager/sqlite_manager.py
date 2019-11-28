@@ -33,11 +33,11 @@ class SqliteManager:
 		try:
 			cursor.execute('SELECT * FROM users')
 			rows = cursor.fetchall()
-
-			users = [row[1] for row in rows]
+			users = [row[0] for row in rows]
+			print users
 			return users
 		except Error as e:
-			logging.warn('Problem in sqlite: %s' % e)
+			logging.warn('Problem in users - sqlite: %s' % e)
 			return None
 
 	def get_keywords_accounts_for_users(self):
@@ -49,8 +49,10 @@ class SqliteManager:
 		tawasol_dict = dict()
 		cursor = self.connection.cursor()
 		for user in self.users:
+			print 'user in users', user
 			cursor.execute('SELECT * FROM keywords WHERE email=?', (user,))
 			hashtags_rows = cursor.fetchall()
+			print 'hashtag rows', hashtags_rows
 			hashtags = [row[1] for row in hashtags_rows]
 			##
 			cursor.execute('SELECT * FROM accounts WHERE email=?', (user,))
