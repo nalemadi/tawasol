@@ -125,7 +125,8 @@ class Genderizer:
 		:return: gender
 		"""
 		name = name.strip().lower()
-		gender = {2:'male', 1:'female'}
+		# gender = {2:'male', 1:'female'}
+		gender = {2:'female', 1:'male'}
 		self.load_model()
 		x_features = ['last_letter', 'last_two_letters','last_three_letters', 'is_last_vowel']
 
