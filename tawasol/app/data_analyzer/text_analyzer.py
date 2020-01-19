@@ -14,7 +14,7 @@ server_location = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(_
 p = subprocess.Popen(shlex.split("java -jar {}/SentiStrength.jar stdin sentidata {}/SentStrength_Data/ trinary".format(server_location,server_location)), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 #model to get sentiment of arabic tweets
-ar_senti = ArSentimentPredict('embeddings/arabic-news.bin')
+ar_senti = ArSentimentPredict('./embeddings/arabic-news.bin')
 
 
 class TextAnalyzer():
