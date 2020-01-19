@@ -3,9 +3,18 @@ import os
 from ..utils.consts import BLACK_LISTED_WORDS
 import shlex
 import logging
+from ..models.ar_sentiment.asa_predict import *
 
 labMT_eng, labMTvector_eng, labMTwordList_eng = emotionFileReader(stopval=0.0, lang='english', returnVector=True)
 labMT_ar, labMTvector_ar, labMTwordList_ar = emotionFileReader(stopval=0.0, lang='arabic', returnVector=True)
+
+# en sentiment
+# get location of the server
+server_location = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'utils'))
+p = subprocess.Popen(shlex.split("java -jar {}/SentiStrength.jar stdin sentidata {}/SentStrength_Data/ trinary".format(server_location,server_location)), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+#model to get sentiment of arabic tweets
+ar_senti = ArSentimentPredict('embeddings/arabic-news.bin')
 
 
 class TextAnalyzer():
@@ -85,18 +94,19 @@ class TextAnalyzer():
 		:param lang:
 		:return:
 		"""
-		text = text.encode('utf8')
-		# get location of the server
-		server_location = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'utils'))
-		p = subprocess.Popen(shlex.split("java -jar {}/SentiStrength.jar stdin sentidata {}/SentStrength_Data/ trinary".format(server_location, server_location)), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stdout_text, stderr_text = p.communicate(text.replace(" ", "+"))
-
-		try:
-			result = int(float(stdout_text.rstrip().split(' ')[-1]))
+		if lang == 'ar':
+			result = ar_senti.get_arsentiment([text])
 			return result
-		except Exception, e:
-			logging.info('Exception: get_sentiment_sentistrength')
-			return 0
+		else:
+			text = text.encode('utf8')
+			stdout_text, stderr_text = p.communicate(text.replace(" ", "+"))
+			try:
+				result = int(float(stdout_text.rstrip().split(' ')[-1]))
+				return result
+			except Exception as e:
+				logging.info('Exception: get_sentiment_sentistrength')
+				return 0
+
 		# if lang == 'en':
 		# 	text = text.encode('utf8')
 		# 	#get location of the server

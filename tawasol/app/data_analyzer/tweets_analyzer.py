@@ -31,11 +31,7 @@ class TweetsAnalyzer(TextAnalyzer, TimeAnalyzer):
         self.hashtags = defaultdict(int)
         self.mentions = defaultdict(int)
         self.top_users = defaultdict(int)
-        # self.images = []
-        #self.users_graph_nodes = defaultdict()
         self.gender_distribution = {'female': 0, 'male': 0}
-        #self.community_graph = {'nodes': [], 'links': []}
-        #self.users_graph_links = set()
         self.start_time = datetime.utcnow()
         self.users_profile = dict()
         self.user_cat = dict()
