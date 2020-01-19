@@ -25,7 +25,8 @@ class ArSentimentPredict(object):
         :param embeddings_file: path to the embeddings file.
         """
         self.server_location = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-        self.embeddings, self.dimension = self.load_vectors(embeddings_file)
+        m_name = '{}/{}'.format(self.server_location, embeddings_file)
+        self.embeddings, self.dimension = self.load_vectors(m_name)
         self.classifier = self.load_model()
         info("ArSentiment model is loaded ..!")
 
