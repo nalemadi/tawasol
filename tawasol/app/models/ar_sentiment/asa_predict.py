@@ -112,9 +112,9 @@ class ArSentimentPredict(object):
         x_clean = imp.fit_transform(x)
         return x_clean
 
-    def load_model(model_name='model/model_pickle_sa.p'):
-        # model_name = '{}/{}'.format(self.server_location, model_name)
-        classifier = pickle.load(open(model_name, 'rb'))
+    def load_model(self, model_name='model/model_pickle_sa.p'):
+        m_name = '{}/{}'.format(self.server_location, model_name)
+        classifier = pickle.load(open(m_name, 'rb'))
         return classifier
 
     def get_arsentiment(self, words):
