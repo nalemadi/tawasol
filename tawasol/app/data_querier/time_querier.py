@@ -13,7 +13,8 @@ class TimeQuerier:
 		"""
 		:return: cursor of tweets
 		"""
-		end_date = datetime.now(timezone('GMT'))
+		# end_date = datetime.now(timezone('GMT'))
+		end_date = datetime.now()
 		start_date = end_date-timedelta(minutes=int(self.time_covered))
 		cursor = self.tweets_collection.find({'created_at': {'$gte':start_date, '$lt':end_date}}, {'_id': False}) #For debuging.limit(10)
 		cursor.batch_size(1000)

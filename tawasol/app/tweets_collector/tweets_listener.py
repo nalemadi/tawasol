@@ -18,7 +18,7 @@ class TweetsListener(StreamListener):
             tweet = json.loads(data)
             if tweet['text']:
                 self.redis_db.rpush(self.tweets_channel, json.dumps(tweet))
-        except Exception, e:
+        except Exception as e:
             pass
 
     def on_error(self, status):
