@@ -3,7 +3,7 @@ from multiprocessing import Process
 import json
 import logging
 logging.getLogger().setLevel(logging.INFO)
-logging.basicConfig(filename='crawler.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='crawler.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 class TweetProcessor(Process):
@@ -34,8 +34,8 @@ class TweetProcessor(Process):
 		while True:
 			try:
 				# if there is something in the queue, process it.
-				if self.redis_db.llen(self.tweets_channel) > 0:
-					tweet = self.redis_db.lpop(self.tweets_channel)
+				#if self.redis_db.llen(self.tweets_channel) > 0:
+					tweet = self.redis_db.blpop(self.tweets_channel)
 					#logging.info(json.dumps(tweet, ensure_ascii=False).encode('utf8'))
 
 					_tweet = json.loads(tweet)
@@ -51,8 +51,7 @@ class TweetProcessor(Process):
 								logging.info('tweet is inserted into: %s . tweet: %s' % (tawasol_user, processed_tweet['text']))
 							else:
 								self.undefined_tweets_collection.insert_one(processed_tweet)
-								logging.info(
-									'tweet is inserted into Undefined collection: %s' % processed_tweet['text'])
+								logging.info('tweet is inserted into Undefined collection: %s' % processed_tweet['text'])
 							# for tweet_collection in self.tweets_collection_dict:
 							# 	if collection == tweet_collection.name:
 							# 		#self.redis_db.rpush(self.results_channel[tawasol_user], json.dumps(processed_tweet))

@@ -455,6 +455,27 @@ $(document).ready(function() {
         generate_tweets_counter_chart(values.accounts_tweets_counter, account_age_cat);
     }
 
+    function generate_stat_nbrs_tmp(values) {
+        // change categories format
+        console.log('generate_stat_nbrs_tmp');
+        var categories = update_categories_format(values.categories);
+        update_tweets_count(values.nbr_tweets);
+        update_users_count(values.nbr_users);
+        update_date();
+        generate_users_distribution(values, categories);
+        generate_hashtags(values);
+        generate_happiness_chart(values, categories);
+        generate_language_distribution(values);
+        generate_gender_distribution(values);
+        catch_new_tweets(values.tweets);
+        generate_top_users(values.top_users);
+        generate_top_mentions(values.top_mentions);
+        generate_top_tweets(values.top_tweets);
+        var account_age_cat = values.account_age_cat;
+        generate_account_creation_chart(values.account_creation, account_age_cat);
+        generate_tweets_counter_chart(values.accounts_tweets_counter, account_age_cat);
+    }
+
     function processMapTweets() {
         console.log("map tweets length");
         console.log(map_tweets.length);
@@ -489,6 +510,32 @@ $(document).ready(function() {
         $.getJSON(url, function(values, responseText, jqXHR) {
             if (jqXHR.status != 204) {
                 generate_stat_nbrs(values.twitter);
+            }
+        });
+    }
+
+    function generate_senti_chart(values) {
+        console.log("temp senti v2");
+        var categories = update_categories_format(values.categories);
+        generate_sentiment_chart(values, categories);
+    }
+
+    function generate_charts_tmp(user_email) {
+        console.log("inside generate v2");
+        var url = '/get_info/' + user_email;
+        $.getJSON(url, function(values, responseText, jqXHR) {
+            if (jqXHR.status != 204) {
+                generate_stat_nbrs_tmp(values.twitter);
+            }
+        });
+    }
+
+    function generate_senti_analysis(){
+        console.log("generate_senti_analysis v2");
+        var url = '/get_info/[REDACTED_VALUE]';
+        $.getJSON(url, function(values, responseText, jqXHR) {
+            if (jqXHR.status != 204) {
+                generate_senti_chart(values.twitter);
             }
         });
     }
@@ -566,7 +613,16 @@ $(document).ready(function() {
     if (user_data != null) {
         var user_email = user_data.name;
         console.log(user_email);
-        generate_charts(user_email);
+        if(user_email === '[REDACTED_VALUE]') {
+            console.log("step 1 --> user khaliji: "+user_email);
+            generate_charts_tmp(user_email);
+            console.log("step 2 --> user khaliji: "+user_email);
+            generate_senti_analysis();
+            console.log("step 3 --> user khaliji: "+user_email);
+        }
+        else {
+            generate_charts(user_email);
+        }
         //generate_map();
     }
 });
